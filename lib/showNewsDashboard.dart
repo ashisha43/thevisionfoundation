@@ -7,6 +7,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:tvf/Admin/admin.dart';
 import 'package:tvf/main2.dart';
 import 'package:tvf/setData.dart';
 import 'package:tvf/showContent.dart';
@@ -139,6 +140,20 @@ class _ShowNewsDashboardState extends State<ShowNewsDashboard> {
 
                   Navigator.push(context,
                     MaterialPageRoute(builder: (context) => UploadArticle(),
+                    ),
+                  );
+                },
+              ),
+
+              ListTile(
+                title: Text('Admin'),
+                onTap: () {
+                  // Update the state of the app
+                  // ...
+                  // Then close the drawer
+
+                  Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => AdminDashboard(),
                     ),
                   );
                 },
@@ -291,20 +306,24 @@ class _ShowNewsDashboardState extends State<ShowNewsDashboard> {
           },
           child: Row(
             children: <Widget>[
-              Container(
-               height: 80,
-                width: 120,
-
-                child:  Image.network(
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8.0),
+                child: Image.network(
                   "$_imageurl",
-                    fit:BoxFit.fill,
+                  fit:BoxFit.fill,
+                  height: 80.0,
+                  width: 120.0,
 
                   loadingBuilder: (context,child,progress){
-                    return progress==null?child:Center(child: Icon(Icons.image));
+                    return progress==null?child:Container(
+                        height:80,
+                        width:120,
+                        child: Center(child: Icon(Icons.image)));
                   },
                 ),
 
               ),
+
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -395,11 +414,12 @@ class _ShowNewsDashboardState extends State<ShowNewsDashboard> {
 
       for( int i=ds.data['newscount']-1;i>=0;i--)
       {
-         await Firestore.instance
+       try{  await Firestore.instance
             .collection('blogs')
             .document('news'+'$i')
             .get()
             .then((DocumentSnapshot ds) {
+              if(ds.data['isPublished']){
           setState(() {
             _titleurls.add(ds.data['title']);
             _desctexturl.add(ds.data['desctexturl']);
@@ -409,11 +429,16 @@ class _ShowNewsDashboardState extends State<ShowNewsDashboard> {
             print("+++++++++++++++++++");
             _imageurls.add(arr[1]);
 
-          });
-
+          });}
 
         });
-        print(i);
+        print(i);}
+        catch(e){
+         print("not fatched");
+         continue;
+
+        }
+
 
       }
     });
