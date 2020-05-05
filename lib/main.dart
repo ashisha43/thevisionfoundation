@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:tvf/Admin/admin.dart';
 import 'package:tvf/showContent.dart';
 import 'package:tvf/showNewsDashboard.dart';
 
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
       home: ShowNewsDashboard()
       //ShowContent()
      // AuthService().handleAuth(),
+     // AdminDashboard()
     );
   }
 }

@@ -23,6 +23,8 @@ class _ShowNewsDashboardState extends State<ShowNewsDashboard> {
   List<String> _imageurls=[];
   List<String> _titleurls=[];
   List<String> _desctexturl=[];
+  List<String> imageCarouselSlider=[];
+  int _newsCount;
   bool isLoaded=false;
 
 
@@ -37,12 +39,14 @@ class _ShowNewsDashboardState extends State<ShowNewsDashboard> {
     // TODO: implement initState
     super.initState();
     permission();
+    _fatchNewsCount();
      _fatchlistcontent();
+
     _scrollController.addListener((){
       if(_scrollController.position.pixels==_scrollController.position.maxScrollExtent)
         if(_isMoreData){
           print("adderd");
-         // _getMoreData();
+          _getMoreData();
         }
       else{
         print("No More Data");
@@ -161,18 +165,18 @@ class _ShowNewsDashboardState extends State<ShowNewsDashboard> {
             ],
           ),
         ),
-      body:_imageurls.length<6?Center(child: CircularProgressIndicator()):
+      body:imageCarouselSlider.length<5?Center(child: CircularProgressIndicator()):
       RefreshIndicator(
     onRefresh: () async {
-     /* setState(() {
-        _imageurls.clear();
-        _titleurls.clear();
-        _desctexturl.clear();
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ShowNewsDashboard()
+          ),
+          ModalRoute.withName("/Home")
+      );
 
-      });
-      _fatchlistcontent();*/
-
-    return await Future.delayed(Duration(seconds: 3));
+     return await Future.delayed(Duration(seconds: 2));
     },child: ListView(
         controller: _scrollController,
 
@@ -193,7 +197,7 @@ class _ShowNewsDashboardState extends State<ShowNewsDashboard> {
                       onPageChanged: callbackFunction,
                     ),
                     itemBuilder: (context, index) {
-                      return Image.network(_imageurls[index],fit: BoxFit.cover,);
+                      return Image.network(imageCarouselSlider[index],fit: BoxFit.cover,);
                     },
                   )
 
@@ -249,20 +253,22 @@ class _ShowNewsDashboardState extends State<ShowNewsDashboard> {
 
 
            ListView.builder(
-             controller: _scrollController2,
+            controller: _scrollController2,
 
-        shrinkWrap: true,
-        itemCount: _titleurls.length,
-        itemBuilder: (context, index) {
-            if(index==_titleurls.length)
+            shrinkWrap: true,
+            itemCount: _titleurls.length+1,
+            itemBuilder: (context, index) {
+              if(index==_titleurls.length)
               {
                 if(_isMoreData)
-              return Center(child: CircularProgressIndicator());
+                  return Center(child: CircularProgressIndicator());
                 else return  Center(child: Text("No More Data"));
               }
-       return cardview(_imageurls[index],_titleurls[index],_desctexturl[index]);
-        },
-      ),
+              List<String> arr=_imageurls[index].split(" ");
+              String imagetitle=arr[1];
+              return cardview(_imageurls[index],_titleurls[index],_desctexturl[index],imagetitle);
+            },
+          ),
 
         ],
       ))
@@ -287,7 +293,7 @@ class _ShowNewsDashboardState extends State<ShowNewsDashboard> {
     );
   }
 
-  Widget cardview(String _imageurl,String _titleurl,String _desurl) {
+  Widget cardview(String _imageurl,String _titleurl,String _desurl,imagetitle) {
     return Container(
       child: new Card(
         margin: new EdgeInsets.symmetric(horizontal: 15.0,vertical: 6.0),
@@ -309,7 +315,7 @@ class _ShowNewsDashboardState extends State<ShowNewsDashboard> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(8.0),
                 child: Image.network(
-                  "$_imageurl",
+                  "$imagetitle",
                   fit:BoxFit.fill,
                   height: 80.0,
                   width: 120.0,
@@ -362,24 +368,20 @@ class _ShowNewsDashboardState extends State<ShowNewsDashboard> {
     );
   }
   void _getMoreData() {
-    setState(() {
+    if(_newsCount>0)
+    {
+      setState(() {
+        _newsCount=_newsCount-10;
+        _fatchlistcontent();
+      });
+    }
+    else{
+      print("No More News");
+      setState(() {
+        _isMoreData=false;
+      });
 
-
-    _imageurls.add("https://firebasestorage.googleapis.com/v0/b/sampletvf-8aa59.appspot.com/o/images%2F7.webp?alt=media&token=2c6c4cfd-537a-4acd-8905-c051ee6f282f");
-    _imageurls.add("https://firebasestorage.googleapis.com/v0/b/sampletvf-8aa59.appspot.com/o/images%2F8.webp?alt=media&token=585ded3c-4ecd-4f92-b3d0-dd2df123c6e4");
-    _imageurls.add("https://firebasestorage.googleapis.com/v0/b/sampletvf-8aa59.appspot.com/o/images%2F9.webp?alt=media&token=89bed87c-4c0a-4cbb-b4a6-b32da89296cc");
-    _imageurls.add("https://firebasestorage.googleapis.com/v0/b/sampletvf-8aa59.appspot.com/o/images%2FRTR4SEBM-770x433.webp?alt=media&token=a34c5cad-3b67-4b35-89fc-50b3957a3048");
-    _imageurls.add("https://firebasestorage.googleapis.com/v0/b/sampletvf-8aa59.appspot.com/o/images%2FDinxyJ8U0AEIHvH.jpg?alt=media&token=6d248ef8-a933-40d1-b5fd-56a3ac53055c");
-
-    _titleurls.add("In pics: White tiger mauls 22-year-old man to death in Delhi Zoo");
-    _titleurls.add("Modi’s most-trusted bureaucrat | India Today Insight");
-    _titleurls.add("Andhra cop on lockdown duty offers Ramzan prayers on empty road as colleagues stand guard");
-    _titleurls.add("When will Covid-19 outbreak end in India? Researchers risk a May date");
-    _titleurls.add("Quarantine Curation: 10 short films to watch on YouTube if you are bored of OTT platforms");
-
-    print("More Data Added");
-     _isMoreData=false;
-    });
+    }
 
   }
 
@@ -412,7 +414,7 @@ class _ShowNewsDashboardState extends State<ShowNewsDashboard> {
         .then((DocumentSnapshot ds)async {
 
 
-      for( int i=ds.data['newscount']-1;i>=0;i--)
+      for( int i=_newsCount;i>_newsCount-10;i--)
       {
        try{  await Firestore.instance
             .collection('blogs')
@@ -423,11 +425,7 @@ class _ShowNewsDashboardState extends State<ShowNewsDashboard> {
           setState(() {
             _titleurls.add(ds.data['title']);
             _desctexturl.add(ds.data['desctexturl']);
-            //_imageurls.add(ds.data['imageurls']);
-            String imageurls=ds.data['imageurls'];
-            var arr=imageurls.split(" ");
-            print("+++++++++++++++++++");
-            _imageurls.add(arr[1]);
+            _imageurls.add(ds.data['imageurls']);
 
           });}
 
@@ -442,62 +440,38 @@ class _ShowNewsDashboardState extends State<ShowNewsDashboard> {
 
       }
     });
+    _fatchCarouselSliderimage();
 
   }
 
-
-  /*Future downloader(Dio dio, String url,String filename) async {
-
-    try {
-      Response response = await dio.get(
-          url,
-          onReceiveProgress:showDownloadProgress,
-          //Received data with List<int>
-          options: Options(
-              responseType: ResponseType.bytes,
-              followRedirects: false,
-              validateStatus: (status) {
-                return status < 500;
-              }
-          ),
-          cancelToken: token
-      );
-      print(response.headers);
-      final Directory directory = await getExternalStorageDirectory();
-      final File file = File('${directory.path}/$filename');
-      var raf = file.openSync(mode: FileMode.write);
-      // response.data is List<int> type
-      raf.writeFromSync(response.data);
-      await raf.close();
-      _read('my_file.txt');
-    } catch (e) {
-      print(e);
-    }
-  }
-  void showDownloadProgress(received, total) {
-    double percentage = (received / total * 100).floorToDouble();
-
-    if (total != -1) {
-      print((received / total * 100).toStringAsFixed(0) + "%");
-
-    }
-  }
-  Future<String> _read(String filename) async {
-    String text;
-
-    try {
-      final Directory directory = await getExternalStorageDirectory();
-      final File file = File('${directory.path}/$filename');
-      text = await file.readAsString();
+  void _fatchNewsCount() async{
+    await Firestore.instance
+        .collection('blogs')
+        .document('UID')
+        .get()
+        .then((DocumentSnapshot ds)async {
       setState(() {
-        =text;
+        _newsCount=ds.data['newscount'];
       });
 
-      print(text);
-    } catch (e) {
-      print("Couldn't read file");
+
+
+    });
+
+
+  }
+
+  void _fatchCarouselSliderimage() {
+    for(int i=0;i<5;i++){
+      setState(() {
+        List<String> arr=_imageurls[i].split(" ");
+        imageCarouselSlider.add(arr[1]);
+      });
+
     }
-    return text;
-  }*/
+
+  }
+
+
 
 }

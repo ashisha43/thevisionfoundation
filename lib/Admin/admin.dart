@@ -20,7 +20,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
   List<String> _titleurls=[];
   List<String> _desctexturl=[];
   List<int> _position=[];
-
+  int _newsCount;
+  String image;
 
 
   ScrollController _scrollController=ScrollController();
@@ -34,13 +35,14 @@ class _AdminDashboardState extends State<AdminDashboard> {
     // TODO: implement initState
     super.initState();
     permission();
+    _fatchNewsCount();
     _fatchlistcontent();
 
     _scrollController.addListener((){
       if(_scrollController.position.pixels==_scrollController.position.maxScrollExtent)
         if(_isMoreData){
           print("adderd");
-          // _getMoreData();
+          _getMoreData();
         }
         else{
           print("No More Data");
@@ -60,8 +62,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("App Dashboard"),
-          backgroundColor: Colors.indigo,
+          title: Text("Admin"),
+          backgroundColor:  Color(0xFF002760),
           actions: [
             DropdownMenu(context),
             IconButton(icon: Icon(Icons.home), onPressed: () {
@@ -148,15 +150,15 @@ class _AdminDashboardState extends State<AdminDashboard> {
         body:_imageurls.length==null?Center(child: CircularProgressIndicator()):
             RefreshIndicator(
                 onRefresh: () async {
-                  /* setState(() {
-            _imageurls.clear();
-            _titleurls.clear();
-            _desctexturl.clear();
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AdminDashboard()
+                      ),
+                      ModalRoute.withName("/Home")
+                  );
 
-      });
-      _fatchlistcontent();*/
-
-                  return await Future.delayed(Duration(seconds: 3));
+                  return await Future.delayed(Duration(seconds: 2));
                 },child: ListView(
 
               controller: _scrollController,
@@ -166,7 +168,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   controller: _scrollController2,
 
                   shrinkWrap: true,
-                  itemCount: _titleurls.length,
+                  itemCount: _titleurls.length+1,
                   itemBuilder: (context, index) {
                     if(index==_titleurls.length)
                     {
@@ -174,7 +176,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
                         return Center(child: CircularProgressIndicator());
                       else return  Center(child: Text("No More Data"));
                     }
-                    return cardview(_imageurls[index],_titleurls[index],_desctexturl[index],_position[index]);
+                    List<String> arr=_imageurls[index].split(" ");
+                    String imagetitle=arr[1];
+                    return cardview(_imageurls[index],_titleurls[index],_desctexturl[index],_position[index],imagetitle);
                   },
                 ),
 
@@ -205,7 +209,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
     );
   }
 
-  Widget cardview(String _imageurl,String _titleurl,String _desurl,int _position) {
+  Widget cardview(String _imageurl,String _titleurl,String _desurl,int _position,String imagetitle) {
+
     return StreamBuilder(
       stream: Firestore.instance.collection('blogs').document('news'+'$_position').snapshots(),
       builder: (BuildContext context,  snapshot) {
@@ -227,88 +232,106 @@ class _AdminDashboardState extends State<AdminDashboard> {
                     ),
                   );
                 },
-                child: Row(
-
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8.0),
-                      child: Image.network(
-                        "$_imageurl",
-                        fit:BoxFit.fill,
-                        height: 80.0,
-                        width: 120.0,
+                    new Row(
+                      children: <Widget>[
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8.0),
+                          child: Image.network(
+                            "$imagetitle",
+                            fit:BoxFit.fill,
+                            height: 80.0,
+                            width: 120.0,
 
-                        loadingBuilder: (context,child,progress){
-                          return progress==null?child:Container(
-                              height:80,
-                              width:120,
-                              child: Center(child: Icon(Icons.image)));
-                        },
-                      ),
+                            loadingBuilder: (context,child,progress){
+                              return progress==null?child:Container(
+                                  height:80,
+                                  width:120,
+                                  child: Center(child: Icon(Icons.image)));
+                            },
+                          ),
 
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            Text("$_titleurl",style: TextStyle(
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text("$_titleurl",style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18
                             ),),
-                               Row(
-                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: <Widget>[
-                                 RaisedButton(
-                                   child: Text('Publish',style: TextStyle(
-                                     color:(d.data['isPublished'])? Colors.green:Colors.black
-                                   ),
-                                   ),
+                          ),
+                        )
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
 
-                                   onPressed: (){
-                                     SetTrue(_position);
+                        children: <Widget>[
+                          RaisedButton(
+                            color: (d.data['isPublished'])? Colors.green:Colors.grey[200],
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                              // side: BorderSide(color: Colors.red)
+                            ),
+                            child: Text('Publish',style: TextStyle(
+                                color:(d.data['isPublished'])? Colors.white:Colors.black,
 
-                                   },
-                                 ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 8.0),
-                                    child: RaisedButton(
-                                      child: Text('Suspend',style: TextStyle(
-                                          color:(d.data['isPublished'])? Colors.black:Colors.amber
-                                      ),),
 
-                                      onPressed: (){
-                                        SetFalse(_position);
+                            ),
+                            ),
 
-                                      },
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(left: 8.0),
-                                      child: RaisedButton(
-                                        child: Text('Delete',style: TextStyle(
-                                            color: Colors.red
-                                        ),),
+                            onPressed: (){
+                              SetTrue(_position);
 
-                                        onPressed: (){
-                                        deletePost(_position);
-
-                                        },
-                                      ),
-                                    ),
-                                  )
-                                ],
+                            },
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 10.0),
+                            child: RaisedButton(
+                              color: (d.data['isPublished'])? Colors.grey[200]:Colors.amber[400],
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                                //side: BorderSide(color: Colors.red)
                               ),
+                              child: Text('Suspend',style: TextStyle(
+                                  color:(d.data['isPublished'])? Colors.black:Colors.white,
 
-                          ],
+                              ),),
 
-                        ),
+                              onPressed: (){
+                                SetFalse(_position);
+
+                              },
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 10.0),
+                            child: RaisedButton(
+                              color:  Colors.grey[200],
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                                // side: BorderSide(color: Colors.red)
+                              ),
+                              child: Text('Delete',style: TextStyle(
+                                  color: Colors.red,
+
+
+                              ),),
+
+                              onPressed: (){
+                                _shownDeleteDialog(_position,_titleurl);
+
+
+                              },
+                            ),
+                          )
+                        ],
                       ),
-                    )
+                    ),
                   ],
                 )
             ),
@@ -344,24 +367,20 @@ class _AdminDashboardState extends State<AdminDashboard> {
     );
   }
   void _getMoreData() {
-    setState(() {
-
-
-      _imageurls.add("https://firebasestorage.googleapis.com/v0/b/sampletvf-8aa59.appspot.com/o/images%2F7.webp?alt=media&token=2c6c4cfd-537a-4acd-8905-c051ee6f282f");
-      _imageurls.add("https://firebasestorage.googleapis.com/v0/b/sampletvf-8aa59.appspot.com/o/images%2F8.webp?alt=media&token=585ded3c-4ecd-4f92-b3d0-dd2df123c6e4");
-      _imageurls.add("https://firebasestorage.googleapis.com/v0/b/sampletvf-8aa59.appspot.com/o/images%2F9.webp?alt=media&token=89bed87c-4c0a-4cbb-b4a6-b32da89296cc");
-      _imageurls.add("https://firebasestorage.googleapis.com/v0/b/sampletvf-8aa59.appspot.com/o/images%2FRTR4SEBM-770x433.webp?alt=media&token=a34c5cad-3b67-4b35-89fc-50b3957a3048");
-      _imageurls.add("https://firebasestorage.googleapis.com/v0/b/sampletvf-8aa59.appspot.com/o/images%2FDinxyJ8U0AEIHvH.jpg?alt=media&token=6d248ef8-a933-40d1-b5fd-56a3ac53055c");
-
-      _titleurls.add("In pics: White tiger mauls 22-year-old man to death in Delhi Zoo");
-      _titleurls.add("Modi’s most-trusted bureaucrat | India Today Insight");
-      _titleurls.add("Andhra cop on lockdown duty offers Ramzan prayers on empty road as colleagues stand guard");
-      _titleurls.add("When will Covid-19 outbreak end in India? Researchers risk a May date");
-      _titleurls.add("Quarantine Curation: 10 short films to watch on YouTube if you are bored of OTT platforms");
-
-      print("More Data Added");
-      _isMoreData=false;
+if(_newsCount>0)
+{
+  setState(() {
+      _newsCount=_newsCount-10;
+     _fatchlistcontent();
     });
+}
+else{
+  print("No More News");
+  setState(() {
+    _isMoreData=false;
+  });
+
+}
 
   }
 
@@ -394,25 +413,22 @@ class _AdminDashboardState extends State<AdminDashboard> {
         .then((DocumentSnapshot ds)async {
 
 
-      for( int i=ds.data['newscount']-1;i>=0;i--)
+      for( int i=_newsCount;i>_newsCount-10;i--)
       {
        try{ await Firestore.instance
             .collection('blogs')
             .document('news'+'$i')
             .get()
             .then((DocumentSnapshot ds) {
+
           setState(() {
             _titleurls.add(ds.data['title']);
             _desctexturl.add(ds.data['desctexturl']);
             _position.add(ds.data['position']);
-            //_imageurls.add(ds.data['imageurls']);
-            String imageurls=ds.data['imageurls'];
-            var arr=imageurls.split(" ");
-            print("+++++++++++++++++++");
-            _imageurls.add(arr[1]);
+            _imageurls.add(ds.data['imageurls']);
+
 
           });
-
         });
         print(i);}
         catch(e){
@@ -438,59 +454,6 @@ class _AdminDashboardState extends State<AdminDashboard> {
     );
 
 
-/*Future downloader(Dio dio, String url,String filename) async {
-
-    try {
-      Response response = await dio.get(
-          url,
-          onReceiveProgress:showDownloadProgress,
-          //Received data with List<int>
-          options: Options(
-              responseType: ResponseType.bytes,
-              followRedirects: false,
-              validateStatus: (status) {
-                return status < 500;
-              }
-          ),
-          cancelToken: token
-      );
-      print(response.headers);
-      final Directory directory = await getExternalStorageDirectory();
-      final File file = File('${directory.path}/$filename');
-      var raf = file.openSync(mode: FileMode.write);
-      // response.data is List<int> type
-      raf.writeFromSync(response.data);
-      await raf.close();
-      _read('my_file.txt');
-    } catch (e) {
-      print(e);
-    }
-  }
-  void showDownloadProgress(received, total) {
-    double percentage = (received / total * 100).floorToDouble();
-
-    if (total != -1) {
-      print((received / total * 100).toStringAsFixed(0) + "%");
-
-    }
-  }
-  Future<String> _read(String filename) async {
-    String text;
-
-    try {
-      final Directory directory = await getExternalStorageDirectory();
-      final File file = File('${directory.path}/$filename');
-      text = await file.readAsString();
-      setState(() {
-        =text;
-      });
-
-      print(text);
-    } catch (e) {
-      print("Couldn't read file");
-    }
-    return text;
-  }*/
   }
 
   void SetFalse(int position) async{
@@ -505,23 +468,76 @@ class _AdminDashboardState extends State<AdminDashboard> {
   }
 
   void deletePost(int position) async{
-    int newscount;
     await Firestore.instance
         .collection('blogs')
         .document('news'+"$position").delete();
-
-    /*await Firestore.instance
-        .collection('blogs')
-        .document('UID').get().then((DocumentSnapshot ds){
-
-      newscount=ds.data['newscount'];
-    });
-    await Firestore.instance
-        .collection('blogs')
-        .document('UID').updateData({
-      'newscount':newscount-1
-    });*/
   }
 
+  void _shownDeleteDialog(int position,String title) {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          title: new Text("Are you sure to delete this post ?"),
+          content: new Text("$title"),
+          actions: <Widget>[
+            Row(
+              children: <Widget>[
+                new RaisedButton(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    // side: BorderSide(color: Colors.red)
+                  ),
+                  child: new Text("OK"),
+                  color: Colors.green,
+                  onPressed: () {
+                    deletePost(position);
+                    Navigator.of(context).pop();
+                  },
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10.0),
+                  child: RaisedButton(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      // side: BorderSide(color: Colors.red)
+                    ),
+                    child: new Text("Cancle"),
+                    color: Colors.red,
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ),
+              ],
+            ),
+            // usually buttons at the bottom of the dialog
+          ],
+        );
+      },
+    );
+  }
+
+  void _fatchNewsCount() async{
+    await Firestore.instance
+        .collection('blogs')
+        .document('UID')
+        .get()
+        .then((DocumentSnapshot ds)async {
+          setState(() {
+            _newsCount=ds.data['newscount'];
+          });
+
+
+
+    });
+
+
+  }
 
 }
