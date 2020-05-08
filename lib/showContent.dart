@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:tvf/drawer.dart';
 import 'package:tvf/setData.dart';
 class ShowContent extends StatefulWidget {
   @override
@@ -45,7 +46,9 @@ class _ShowContentState extends State<ShowContent> {
       appBar: AppBar(
         title: Text("Show Content"),
         backgroundColor: Color(0xFF002760),
+
       ),
+      drawer: Draw(context),
       body: usertext==null?Center(child: CircularProgressIndicator()):
       Container(
           child: ListView(

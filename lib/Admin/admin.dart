@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:tvf/main2.dart';
+import 'package:tvf/drawer.dart';
 import 'package:tvf/setData.dart';
 import 'package:tvf/showContent.dart';
 
@@ -69,96 +69,14 @@ class _AdminDashboardState extends State<AdminDashboard> {
             IconButton(icon: Icon(Icons.home), onPressed: () {
             }),
             IconButton(icon: Icon(Icons.notifications,color: Colors.white,),),
-
-
-
           ],
-        ),
-        drawer: Drawer(
-          // Add a ListView to the drawer. This ensures the user can scroll
-          // through the options in the drawer if there isn't enough vertical
-          // space to fit everything.
-          child: ListView(
-            // Important: Remove any padding from the ListView.
-            padding: EdgeInsets.zero,
-            children: <Widget>[
-              DrawerHeader(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: <Widget>[
-                      CircleAvatar(
-                        child: Icon(Icons.perm_identity),
-                        radius: 40.0,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top:15.0,left: 8.0 ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text("Welcome",style: TextStyle(
-                                fontSize: 20.0,
-                                color: Colors.white
-                            ),),
-                            Text("User",style: TextStyle(
-                                fontSize: 18.0,
-                                color: Colors.white
-                            ),)
-                          ],),
-                      ),
-                      //Text("Hello")),
-                      //Text("User"))
-
-
-                    ],
-                  ),
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                ),
-              ),
-
-              ListTile(
-                title: Text('Sign Out'),
-                onTap: () {
-                  // Update the state of the app
-                  // ...
-                  // Then close the drawer
-                  Navigator.pop(context);
-                },
-              ),
-
-              ListTile(
-                title: Text('Create Post'),
-                onTap: () {
-                  // Update the state of the app
-                  // ...
-                  // Then close the drawer
-
-                  Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => UploadArticle(),
-                    ),
-                  );
-                },
-              )
-            ],
-          ),
         ),
         body:_imageurls.length==null?Center(child: CircularProgressIndicator()):
             RefreshIndicator(
                 onRefresh: () async {
-                  Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => AdminDashboard()
-                      ),
-                      ModalRoute.withName("/Home")
-                  );
+                  Navigator.pushReplacement(
+                      context, MaterialPageRoute(builder: (BuildContext context) => AdminDashboard()));
 
-                  return await Future.delayed(Duration(seconds: 2));
                 },child: ListView(
 
               controller: _scrollController,
@@ -218,6 +136,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
         DocumentSnapshot d=snapshot.data;
         return Container(
           child: new Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15.0),
+            ),
             margin: new EdgeInsets.symmetric(horizontal: 15.0,vertical: 6.0),
             elevation: 10.0,
             child: InkWell(
@@ -236,38 +157,41 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    new Row(
-                      children: <Widget>[
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8.0),
-                          child: Image.network(
-                            "$imagetitle",
-                            fit:BoxFit.fill,
-                            height: 80.0,
-                            width: 120.0,
-
-                            loadingBuilder: (context,child,progress){
-                              return progress==null?child:Container(
-                                  height:80,
-                                  width:120,
-                                  child: Center(child: Icon(Icons.image)));
-                            },
-                          ),
-
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text("$_titleurl",style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18
-                            ),),
-                          ),
-                        )
-                      ],
-                    ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
+                      child: new Row(
+                        children: <Widget>[
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8.0),
+                            child: Image.network(
+                              "$imagetitle",
+                              fit:BoxFit.fill,
+                              height: 80.0,
+                              width: 120.0,
+
+                              loadingBuilder: (context,child,progress){
+                                return progress==null?child:Container(
+                                    height:80,
+                                    width:120,
+                                    child: Center(child: Icon(Icons.image)));
+                              },
+                            ),
+
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text("$_titleurl",style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18
+                              ),),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0),
                       child: Row(
 
                         children: <Widget>[
@@ -339,7 +263,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
         );
         }
         else{
-          return CircularProgressIndicator();
+          return Container();
         }
       }
     );
@@ -448,7 +372,9 @@ else{
         .collection('blogs')
         .document('news'+"$position")
         .updateData({
-      'isPublished': true
+      'isPublished': true,
+      'isSuspended':false,
+      'isPending':false
     }
 
     );
@@ -461,7 +387,9 @@ else{
         .collection('blogs')
         .document('news'+"$position")
         .updateData({
-      'isPublished': false
+      'isPublished': false,
+      'isSuspended':true,
+      'isPending':false
     }
 
     );
@@ -498,6 +426,8 @@ else{
                   onPressed: () {
                     deletePost(position);
                     Navigator.of(context).pop();
+                    Navigator.pushReplacement(
+                        context, MaterialPageRoute(builder: (BuildContext context) => AdminDashboard()));
                   },
                 ),
                 Padding(
@@ -530,10 +460,8 @@ else{
         .get()
         .then((DocumentSnapshot ds)async {
           setState(() {
-            _newsCount=ds.data['newscount'];
+            _newsCount=ds.data['newscount2'];
           });
-
-
 
     });
 
