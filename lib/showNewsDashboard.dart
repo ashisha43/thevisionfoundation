@@ -300,7 +300,7 @@ class _ShowNewsDashboardState extends State<ShowNewsDashboard> {
   callbackFunction(int index, CarouselPageChangedReason reason) {
     setState(() {
       _currentindex =index;
-      print(_currentindex);
+      //print(_currentindex);
 
     });
 

@@ -68,7 +68,7 @@ import 'package:flutter/material.dart';
               // Then close the drawer
                Navigator.pop(context);
                //Navigator.of(context).pushNamedAndRemoveUntil('/Create Post', ModalRoute.withName('/CreatorDashboad'));
-             Navigator.of(context).pushNamed('/Create Post');
+             Navigator.of(context).pushNamed('/CreatorDashboad');
             },
           ),
           ListTile(
@@ -95,17 +95,7 @@ import 'package:flutter/material.dart';
               Navigator.of(context).pushNamed('/AdminDashboard');
             },
           ),
-          ListTile(
-            title: Text('Creator Dashboard'),
-            onTap: () {
-              // Update the state of the app
-              // ...
-              // Then close the drawer
-              Navigator.pop(context);
-              Navigator.of(context).pushNamed('/CreatorDashboad');
 
-            },
-          ),
         ],
       ),
     );

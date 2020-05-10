@@ -1,14 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:tvf/Admin/userInfo.dart';
 import 'package:tvf/Admin/userslist.dart';
 import 'package:tvf/pickfiles/pickvideos.dart';
 import 'package:tvf/showContent.dart';
-
 import 'Admin/admin.dart';
 import 'authservice.dart';
 import 'creator/creatorDashboard.dart';
 import 'main2.dart';
 import 'showNewsDashboard.dart';
+
 
 
 
@@ -22,19 +23,23 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
 
       debugShowCheckedModeBanner: false,
-      home: //ShowNewsDashboard(),
-      //ShowContent()
+      home: ShowNewsDashboard(),
+      //ShowContent(),
       //AuthService().handleAuth(),
       //AdminDashboard(),
       //CreatorDashboad(),
-      UsersList(),
+      //UsersList(),
+      // UserInfoPage(),
       //pickvideo()
       //initialRoute:'/ShowNewsDashboard' ,
       routes: <String, WidgetBuilder> {
         '/ShowNewsDashboard': (BuildContext context) => new ShowNewsDashboard(),
         '/AdminDashboard': (BuildContext context) => new AdminDashboard(),
         '/CreatorDashboad': (BuildContext context) => new CreatorDashboad(),
-        '/Create Post': (BuildContext context) => new UploadArticle()
+        '/Create Post': (BuildContext context) => new UploadArticle(),
+        '/UserInfoPage':(BuildContext context) => new UserInfoPage(),
+        '/UserList':(BuildContext context) => new UsersList(),
+
       },
 
     );

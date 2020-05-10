@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:tvf/drawer.dart';
+import 'package:tvf/setData.dart';
 
 class UsersList extends StatefulWidget {
   @override
@@ -7,21 +10,35 @@ class UsersList extends StatefulWidget {
 
 class _UsersListState extends State<UsersList> {
   TextEditingController editingController = TextEditingController();
-  final duplicateItems = List<String>.generate(100, (i) => "Item $i");
-  var items = List<String>();
+
+  //final duplicateItems = List<String>.generate(100, (i) => "Item $i");
+  List<String>userName=[];
+  List<String>userCity=[];
+  List<String> itemsUserName=[];
+  List<String>itemsUserCity=[];
+  bool isSearchByName=false;
+  bool isSearchByCity=false;
+  bool isSearchBox=false;
+  int userCount=0;
+  int listCount=0;
+  List<String>postUid=[];
+
+  ScrollController _scrollController=ScrollController();
+  ScrollController _scrollController2=ScrollController();
+
   @override
   void initState() {
-    items.addAll(duplicateItems);
+    _fatchUserCount();
+    _fatchUserInfo();
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("UsersList"),
-      ),
       body: ListView(
+        controller: _scrollController,
         children: <Widget>[
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -34,7 +51,7 @@ class _UsersListState extends State<UsersList> {
                 style: TextStyle(
                     fontSize: 30
                 ),),
-              Text("100",
+              Text("$userCount",
                 style: TextStyle(
                     fontSize: 20
                 ),)
@@ -43,11 +60,56 @@ class _UsersListState extends State<UsersList> {
           Divider(
             color: Colors.black,
           ),
-          Padding(
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              RaisedButton(
+                child: Text("Search By Name"),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  // side: BorderSide(color: Colors.red)
+                ),
+                onPressed: (){
+                  setState(() {
+                    isSearchByCity=false;
+                    isSearchBox=true;
+                    isSearchByName=true;
+                    editingController.clear();
+                    searchByName("");
+                    searchByCity("");
+
+
+                  });
+                },
+              ),
+              RaisedButton(
+                child: Text("Search By City"),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  // side: BorderSide(color: Colors.red)
+                ),
+                onPressed: (){
+                  setState(() {
+                    isSearchByName=false;
+                    isSearchBox=true;
+                    isSearchByCity=true;
+                   editingController.clear();
+                    searchByName("");
+                    searchByCity("");
+
+
+                  });
+                },
+              )
+
+            ],
+          ),
+          isSearchBox?Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextField(
               onChanged: (value) {
-                filterSearchResults(value);
+                isSearchByName?searchByName(value):searchByCity(value);
               },
               controller: editingController,
               decoration: InputDecoration(
@@ -58,13 +120,15 @@ class _UsersListState extends State<UsersList> {
                       borderRadius: BorderRadius.all(Radius.circular(25.0)))),
 
             ),
-          ),
+          ):Container(),
+
           ListView.builder(
+            controller: _scrollController2,
 
               shrinkWrap: true,
-              itemCount: items.length,
+              itemCount: listCount,
               itemBuilder: (context, index) {
-                return cardview(items[index]);
+                return cardview(itemsUserName[index],itemsUserCity[index],postUid[index]);
               }
 
           )
@@ -74,7 +138,7 @@ class _UsersListState extends State<UsersList> {
     );
   }
 
-  Widget cardview(String item) {
+  Widget cardview(String username,String userCity,String postUid) {
     return Container(
         child: new Card(
             shape: RoundedRectangleBorder(
@@ -86,6 +150,11 @@ class _UsersListState extends State<UsersList> {
             child: InkWell(
                 splashColor: Colors.blue.withAlpha(30),
                 onTap: () {
+                  setState(() {
+                    print(postUid);
+                    SetData.psotUid=postUid;
+                  });
+                   Navigator.of(context).pushNamed("/UserInfoPage");
 
                 },
                 child: Padding(
@@ -103,15 +172,12 @@ class _UsersListState extends State<UsersList> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text("User name",
+                            Text(username,
                               style: TextStyle(
-                                  fontSize: 20.0
+                                  fontSize: 22.0
                               ),),
-                            Text("City: Raipur", style: TextStyle(
-                                fontSize: 15
-                            ),),
-                            Text("$item", style: TextStyle(
-                                fontSize: 15
+                            Text("$userCity", style: TextStyle(
+                                fontSize: 18
                             ),),
 
 
@@ -128,26 +194,104 @@ class _UsersListState extends State<UsersList> {
     );
   }
 
-  void filterSearchResults(String query) {
-    List<String> dummySearchList = List<String>();
-    dummySearchList.addAll(duplicateItems);
+  void searchByName(String query) {
+    List<String> dummyNameList = [];
+    dummyNameList.addAll(userName);
     if (query.isNotEmpty) {
-      List<String> dummyListData = List<String>();
-      dummySearchList.forEach((item) {
+      print("onbyname");
+      List<String> dummyNameData = [];
+      dummyNameList.forEach((item) {
         if (item.contains(query)) {
-          dummyListData.add(item);
+          dummyNameData.add(item);
         }
       });
       setState(() {
-        items.clear();
-        items.addAll(dummyListData);
+        itemsUserName.clear();
+        itemsUserName.addAll(dummyNameData);
+        listCount=itemsUserName.length;
       });
       return;
     } else {
       setState(() {
-        items.clear();
-        items.addAll(duplicateItems);
+        itemsUserName.clear();
+        itemsUserName.addAll(userName);
+        listCount=itemsUserName.length;
       });
     }
+  }
+
+  void searchByCity(String query) {
+    print("incity");
+    List<String> dummyCityList = [];
+
+    dummyCityList.addAll(userCity);
+    if (query.isNotEmpty) {
+      print("onbycity");
+
+      List<String> dummyCityData = [];
+      dummyCityList.forEach((item) {
+        if (item.contains(query)) {
+          dummyCityData.add(item);
+
+        }
+      });
+      setState(() {
+        itemsUserCity.clear();
+        itemsUserCity.addAll(dummyCityData);
+        listCount=itemsUserCity.length;
+      });
+      return;
+    } else {
+      setState(() {
+        itemsUserCity.clear();
+        itemsUserCity.addAll(userCity);
+        listCount=itemsUserCity.length;
+      });
+    }
+  }
+
+/*void CreateData() async {
+    for (int i = 0; i < 9; i++) {
+      try{await Firestore.instance
+          .collection('UserRecord')
+          .document()
+          .setData({
+        'firstName': userName[i],
+        "city":city[i]
+      }
+
+      );}
+      catch(e)
+    {
+      continue;
+    }
+      print("added");
+    }
+  }*/
+  _fatchUserCount(){
+    Firestore.instance.collection('UserRecord').getDocuments().then((onValue){
+      setState(() {
+        userCount=onValue.documents.length;
+      });
+
+    });
+  }
+  _fatchUserInfo()async{
+   await Firestore.instance.collection('UserRecord').getDocuments().then((onValue){
+      onValue.documents.forEach((doc){
+        setState(() {
+
+          userName.add(doc["firstName"]);
+          userCity.add(doc["city"]);
+          postUid.add(doc.documentID);
+
+        });
+      });
+    });
+
+   itemsUserName.addAll(userName);
+   itemsUserCity.addAll(userCity);
+   listCount=itemsUserName.length;
+
   }
 }

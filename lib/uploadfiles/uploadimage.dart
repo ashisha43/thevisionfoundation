@@ -81,13 +81,7 @@ class _uploadimageState extends State<uploadimage> {
       print("MAP CREATED");
       crudMethods.addData(blogmap).then((result){
         print("FINISHED");
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ShowNewsDashboard()
-            ),
-            ModalRoute.withName("/Home")
-        );
+        Navigator.of(context).pushNamed('/CreatorDashboad');
       });
     }
     catch(Error){

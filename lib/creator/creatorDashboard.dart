@@ -18,6 +18,7 @@ class _CreatorDashboadState extends State<CreatorDashboad> {
   int publishCount=0;
   int pendingCount=0;
   int suspendedCount=0;
+  String creatorName="";
 
 
   ScrollController _scrollController = ScrollController();
@@ -32,6 +33,7 @@ class _CreatorDashboadState extends State<CreatorDashboad> {
     setPunbilsedCount();
     setPendingCount();
     setSuspendedCount();
+    setUserInfo();
   }
 
   @override
@@ -63,7 +65,7 @@ class _CreatorDashboadState extends State<CreatorDashboad> {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 10.0),
-                        child: Text("William James", style: TextStyle(
+                        child: Text("$creatorName", style: TextStyle(
                             fontSize: 20.0
                         ),),
                       )
@@ -151,6 +153,14 @@ class _CreatorDashboadState extends State<CreatorDashboad> {
         ],
 
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).pushNamed('/Create Post');
+          // Add your onPressed code here!
+        },
+        child: Icon(Icons.add),
+        backgroundColor: Colors.amber,
+      ),
     );
   }
 
@@ -158,8 +168,7 @@ class _CreatorDashboadState extends State<CreatorDashboad> {
     try {
       Firestore.instance
           .collection('blogs')
-          .where("UID", isEqualTo: "ashish").orderBy(
-          "timeStamp", descending: true)
+          .where("UID", isEqualTo: "vSaF2smriYn7CCgdyXhb")
           .snapshots()
           .listen((data) =>
           data.documents.forEach((doc) =>
@@ -336,7 +345,7 @@ setPunbilsedCount(){
   try {
   Firestore.instance
       .collection('blogs')
-      .where("UID",isEqualTo: "ashish")
+      .where("UID",isEqualTo: "vSaF2smriYn7CCgdyXhb")
       .where("isPublished", isEqualTo:  true)
       .snapshots()
       .listen((data) =>
@@ -359,7 +368,7 @@ setPunbilsedCount(){
     try {
       Firestore.instance
           .collection('blogs')
-          .where("UID",isEqualTo: "ashish")
+          .where("UID",isEqualTo:"vSaF2smriYn7CCgdyXhb")
           .where("isPending", isEqualTo:  true)
           .snapshots()
           .listen((data) =>
@@ -380,7 +389,7 @@ setPunbilsedCount(){
     try {
       Firestore.instance
           .collection('blogs')
-          .where("UID",isEqualTo: "ashish")
+          .where("UID",isEqualTo: "vSaF2smriYn7CCgdyXhb")
           .where("isSuspended", isEqualTo:  true)
           .snapshots()
           .listen((data) =>
@@ -396,6 +405,15 @@ setPunbilsedCount(){
     catch (e) {
       print(e);
     }
+  }
+
+  void setUserInfo() {
+    Firestore.instance.collection('UserRecord').document("vSaF2smriYn7CCgdyXhb").get().then((DocumentSnapshot ds){
+      setState(() {
+        creatorName=ds.data["firstName"];
+      });
+
+    });
   }
 
 
