@@ -3,20 +3,26 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tvf/uploadfiles/uploadimage.dart';
+import 'package:video_player/video_player.dart';
 import 'pickfiles/pickimage.dart';
 import 'package:tvf/pickfiles/pickvideos.dart';
 import 'package:tvf/setdata/setdata.dart';
+import 'package:tvf/pickfiles/pickvideos.dart';
 import 'package:random_string/random_string.dart';
 import 'package:tvf/pickfiles/pickimage.dart';
-
 
 class UploadArticle extends StatefulWidget {
   @override
   _UploadArticleState createState() => _UploadArticleState();
 }
-
+final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 class _UploadArticleState extends State<UploadArticle> {
+
+
   final  authorcontrol=TextEditingController();
+  final  desccontrol=TextEditingController();
+  final  titlecontrol=TextEditingController();
+
   void initState(){
     new Directory('storage/emulated/0/tvf/').create(recursive: true);
 
@@ -24,9 +30,84 @@ class _UploadArticleState extends State<UploadArticle> {
     flname=File('storage/emulated/0/tvf/$randomfilenames.txt');
 
   }
+  void _showcontent() {
+    showDialog(
+      context: context, barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return new AlertDialog(
+          title: new Text('Are you sure to Post?'),
+          content: new SingleChildScrollView(
+            child: new ListBody(
+              children: [
+                new Text("You won't be able to cancel the upload"),
+              ],
+            ),
+          ),
+          actions: [
+            new FlatButton(
+              child: new Text('Yes'),
+              onPressed: () {
+                Navigator.push(context,MaterialPageRoute(builder: (context) => uploadimage()));
+              },
+            ),
+            new FlatButton(
+              child: new Text('No'),
+              onPressed: () {
+
+                Navigator.of(context).pop();
+
+              },
+            ),
+
+          ],
+        );
+      },
+    );
+  }
+  bool allvalid=false;
+  void checkvalidation(){
+
+    String authc=authorcontrol.text;
+    String descc=desccontrol.text;
+    String titlec=titlecontrol.text;
+    allvalid=false;
+    bool descvalid=false;
+    bool titlevalid=false;
+    bool authvalid=false;
+
+    if(authc!=''){
+      print('AUTHOR VALID');
+      authvalid=true;
+    }
+    if(descc!=''){
+      print('DESC VALID');
+      descvalid=true;
+    }
+    if(titlec!=''){
+      print('TITLE VALID');
+      titlevalid=true;
+    }
+    if(descvalid&&authvalid&&titlevalid){
+      print("ALL VALID TRUE");
+      allvalid=true;
+    }else{
+      showwhatinvalid();
+    }
+
+  }
+  void showwhatinvalid() {
+    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+        duration: const Duration(seconds: 1),
+        backgroundColor: Colors.blue,
+        content:Text("Please provide Title, Author and Description")
+    )
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
         appBar: AppBar(
           backgroundColor: Colors.blue,
           title: Text("CREATE POST"),
@@ -37,11 +118,15 @@ class _UploadArticleState extends State<UploadArticle> {
                   side: BorderSide(color: Colors.blue)
               ),
               color: Colors.blue[800],
-              child: Text("Publish"),
+              child: Text("UPLOAD IMAGE"),
               onPressed: (){
-                if(imagepicked){
-                  Navigator.push(context,MaterialPageRoute(builder: (context) => uploadimage()));
+                checkvalidation();
+                if(allvalid){
+                   _showcontent();
                 }
+
+                 // Navigator.push(context,MaterialPageRoute(builder: (context) => uploadimage()));
+
               },
             )
           ],
@@ -63,7 +148,7 @@ class _UploadArticleState extends State<UploadArticle> {
                                 side: BorderSide(color: Colors.blue)
                             ),
                             child:  TextField(
-
+                              controller: titlecontrol,
                               decoration: InputDecoration(
                                   hintText: "  TITLE"
                               ),
@@ -114,6 +199,8 @@ class _UploadArticleState extends State<UploadArticle> {
                            side: BorderSide(color: Colors.blue)
                             ) ,
                             child:  TextField(
+                              controller: desccontrol,
+                              autofocus: false,
                                 maxLines: 10,
                                 decoration: InputDecoration(
                                     hintText: "  DESCRIPTION"
@@ -128,7 +215,6 @@ class _UploadArticleState extends State<UploadArticle> {
                       ),
                       SizedBox(height: 8),
                       Container(
-
                           height: 160,
                           width: MediaQuery. of(context). size. width,
                           child:Card(
@@ -153,9 +239,47 @@ class _UploadArticleState extends State<UploadArticle> {
                                     )
                                 )
                             ),
+
                           )
-                      )
-                    ],
+                      ),
+                                    FutureBuilder(builder:( BuildContext context, AsyncSnapshot snapshot){
+
+                                      return Container(
+                                          height: 160,
+                                          width: MediaQuery. of(context). size. width,
+                                          child:Card(
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius: new BorderRadius.circular(18.0),
+                                                side: BorderSide(color: Colors.blue)
+                                            ),
+                                            child:Center(
+                                                child:selectedvideo==null? Text("VIDEO is not SELECTED")
+                                                    :Container(
+                                                    child: new GridView.builder(
+                                                        itemCount: selectedvideo.length,
+                                                        gridDelegate:
+                                                        new SliverGridDelegateWithFixedCrossAxisCount(
+                                                            crossAxisCount: 3),
+                                                        itemBuilder: (BuildContext context, int index) {
+                                                          return Container(
+                                                            child:vcontroller[index].value.initialized
+                                                                ?AspectRatio(
+                                                              aspectRatio:vcontroller[index].value.aspectRatio ,
+                                                              child: VideoPlayer(vcontroller[index]),
+                                                            )
+                                                                :Container()
+                                                            ,
+                                                          );
+                                                        }
+                                                    )
+                                                )
+                                            )
+
+                                          )
+                                      ) ;
+                                    })
+
+                           ],
                   ),
                 )
             )
