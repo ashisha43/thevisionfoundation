@@ -13,7 +13,9 @@ class _CreatorDashboadState extends State<CreatorDashboad> {
   List<String> _imageurls = [];
   List<String> _titleurls = [];
   List<String> _desctexturl = [];
+  List<String> _videourl = [];
   List<int> _position = [];
+  List<String>thumbnailurl=[];
   String image;
   int publishCount=0;
   int pendingCount=0;
@@ -142,11 +144,11 @@ class _CreatorDashboadState extends State<CreatorDashboad> {
                 else
                   return Center(child: Text("No More Data"));
               }
-              List<String> arr = _imageurls[index].split(" ");
+              List<String> arr = thumbnailurl[index].split(" ");
               String imagetitle = arr[1];
               return cardview(
                   _imageurls[index], _titleurls[index], _desctexturl[index],
-                  _position[index], imagetitle);
+                  _position[index], imagetitle,_videourl[index]);
             },
           ),
 
@@ -177,6 +179,8 @@ class _CreatorDashboadState extends State<CreatorDashboad> {
                 _imageurls.add(doc['imageurls']);
                 _position.add(doc['position']);
                 _desctexturl.add(doc['desctexturl']);
+                _videourl.add(doc['videourl']);
+                thumbnailurl.add(doc['thumbnailurl']);
                 print(doc['position']);
               })
 
@@ -202,7 +206,7 @@ class _CreatorDashboadState extends State<CreatorDashboad> {
   }
 
   Widget cardview(String _imageurl, String _titleurl, String _desurl,
-      int _position, String imagetitle) {
+      int _position, String imagetitle,String videourl) {
     return StreamBuilder(
         stream: Firestore.instance.collection('blogs').document(
             'news' + '$_position').snapshots(),
@@ -223,6 +227,7 @@ class _CreatorDashboadState extends State<CreatorDashboad> {
                       SetData.desurl = _desurl;
                       SetData.imageurl = _imageurl;
                       SetData.titleurl = _titleurl;
+                      SetData.videoUrl=videourl;
 
                       Navigator.push(context,
                         MaterialPageRoute(builder: (context) => ShowContent(),

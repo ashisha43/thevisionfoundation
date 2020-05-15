@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+
 class CrudMethods{
-int newscount=0;
+  int newscount=0;
   Future fetchcount()async {
     await Firestore.instance
         .collection('blogs')

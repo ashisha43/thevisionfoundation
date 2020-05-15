@@ -1,34 +1,34 @@
 {
   "project_info": {
-    "project_number": "1031942107970",
-    "firebase_url": "https://sampletvf-8aa59.firebaseio.com",
-    "project_id": "sampletvf-8aa59",
-    "storage_bucket": "sampletvf-8aa59.appspot.com"
+    "project_number": "984558014406",
+    "firebase_url": "https://sampletvf2.firebaseio.com",
+    "project_id": "sampletvf2",
+    "storage_bucket": "sampletvf2.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1031942107970:android:69d4d684e4a02360330edb",
+        "mobilesdk_app_id": "1:984558014406:android:1a184791528fa4aa502cc7",
         "android_client_info": {
           "package_name": "com.tvf"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1031942107970-cj1svjea1fdsd8f7n0prnk22nfnuenp1.apps.googleusercontent.com",
+          "client_id": "984558014406-pb7sh1q9rfqbljhrskr93eol1f7se3ni.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDTcjyi0SUGpOhJBog3ZFEteD1CFhyU-Ps"
+          "current_key": "AIzaSyCEyXHXXqepqAmHVgMTff3NydutadBKQd0"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1031942107970-cj1svjea1fdsd8f7n0prnk22nfnuenp1.apps.googleusercontent.com",
+              "client_id": "984558014406-pb7sh1q9rfqbljhrskr93eol1f7se3ni.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

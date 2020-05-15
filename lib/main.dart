@@ -1,15 +1,11 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:tvf/Admin/userInfo.dart';
 import 'package:tvf/Admin/userslist.dart';
-import 'package:tvf/pickfiles/pickvideos.dart';
-import 'package:tvf/showContent.dart';
+import 'package:tvf/pushtofirebase.dart';
 import 'Admin/admin.dart';
-import 'authservice.dart';
 import 'creator/creatorDashboard.dart';
 import 'main2.dart';
 import 'showNewsDashboard.dart';
-
 
 
 
@@ -21,7 +17,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-
       debugShowCheckedModeBanner: false,
       home: ShowNewsDashboard(),
       //ShowContent(),
@@ -29,9 +24,12 @@ class MyApp extends StatelessWidget {
       //AdminDashboard(),
       //CreatorDashboad(),
       //UsersList(),
-      // UserInfoPage(),
+      //UserInfoPage(),
       //pickvideo()
+      //pvideo(),
       //initialRoute:'/ShowNewsDashboard' ,
+      //PushdatatoFirebase(),
+
       routes: <String, WidgetBuilder> {
         '/ShowNewsDashboard': (BuildContext context) => new ShowNewsDashboard(),
         '/AdminDashboard': (BuildContext context) => new AdminDashboard(),

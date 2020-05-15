@@ -1,9 +1,5 @@
-import 'dart:io';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:tvf/uploadfiles/uploadimage.dart';
-
 void main(){
   runApp(pickdoc());
 }
@@ -11,51 +7,48 @@ class pickdoc extends StatefulWidget {
   @override
   _pickdocState createState() => _pickdocState();
 }
-
-File selectedimage;
-bool imagepicked=false;
+String URL=" https://firebasestorage.googleapis.com/v0/b/sampletvf-8aa59.appspot.com/o/blogposts%2FUID%2F4hckhsNnu.jpg?alt=media&token=a29526e5-450a-46f9-8550-1903e92f1730 https://firebasestorage.googleapis.com/v0/b/sampletvf-8aa59.appspot.com/o/blogposts%2FUID%2F554E26316.jpg?alt=media&token=a5345d6e-5b93-40bc-a167-71ca2765ea57 https://firebasestorage.googleapis.com/v0/b/sampletvf-8aa59.appspot.com/o/blogposts%2FUID%2F725767453.jpg?alt=media&token=d53b8a42-9201-493c-9078-8528a79bb46e";
+List <String> urllist;
+bool goturl=false;
 class _pickdocState extends State<pickdoc> {
-  getimage() async{
-    //Navigator.push(context,MaterialPageRoute(builder: (context) => mp()));
-    File file = await FilePicker.getFile(allowedExtensions: ['docx','pdf','jpeg']);
-    print("Your image is $file");
-    setState(() {
-      selectedimage=file;
-      imagepicked=true;
-      print("Imagepicked=${true}");
-    });
-  }
 
+  @override
+  void initState() {
+    urllist = URL.split(" ");
+    print(urllist);
+    goturl=true;
+    setState(() {
+    });
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Imagepicker"),
-        actions: <Widget>[ RaisedButton(
-          child: Text("SELECT IMAGE"),
-          onPressed: (){
-            getimage();
-          },
+        appBar: AppBar(
+          title: Text("Imagepicker"),
+          actions: <Widget>[ RaisedButton(
+            child: Text("SELECT IMAGE"),
+          ),
+          ],
         ),
-          RaisedButton(
-            child: Text("UPLOAD IMAGE")
-            ,
-            onPressed: (){
-              if(imagepicked){
-               Navigator.push(context,MaterialPageRoute(builder: (context) => uploadimage()));
-              }
-            },
-          )
-        ],
-
-      ),
-      body: Center(
-          child:selectedimage==null? Text("Image is not loader")
-              :Container(
-            child: Image.file(selectedimage, fit: BoxFit.contain),
-          )
-      ),
-      // This trailing comma makes auto-formatting nicer for build methods.
+        body: FutureBuilder(
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              return  goturl!=true? Container():Center(
+                  child:
+                  new GridView.builder(
+                      itemCount: urllist.length,
+                      gridDelegate:
+                      new SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3),
+                      itemBuilder: (BuildContext context, int index) {
+                        return Container(
+                          child: Image.network(urllist[index],fit: BoxFit.contain),
+                        );
+                      }
+                  )
+              );
+            }
+        )
     );
   }
 }

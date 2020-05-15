@@ -2,6 +2,9 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image/image.dart' ;
+import 'package:tvf/pickfiles/pickimage.dart';
+
 import 'package:video_player/video_player.dart';
 void main(){
   runApp(pickvideo());
@@ -14,6 +17,12 @@ List <VideoPlayerController> vcontroller=List <VideoPlayerController>();
 List <File> selectedvideo;
 bool videopicked=false;
 class _pickvideoState extends State<pickvideo> {
+
+  void initState(){
+    print("INITSTATE");
+    getimage();
+    super.initState();
+  }
   Future initializeplayer() async{
     print("INITIALIZEPLAYER CALLED");
     print(selectedvideo.length);
@@ -21,6 +30,7 @@ class _pickvideoState extends State<pickvideo> {
       vcontroller.add(VideoPlayerController.file(selectedvideo[i])..initialize().then((_){setState(() {  });}));
       vcontroller[i].play();
       vcontroller[i].setVolume(0);
+      vcontroller[i].setLooping(true);
       print(vcontroller[i]);
     }}
   @override
@@ -75,6 +85,7 @@ class _pickvideoState extends State<pickvideo> {
               Padding(padding: EdgeInsets.only(top: 10),
                 child:FloatingActionButton(
                   onPressed: () {
+                    print("POP CONTEXT");
                     Navigator.pop(context);
                   },
                   child: Icon(Icons.check),
