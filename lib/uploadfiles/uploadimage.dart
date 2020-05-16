@@ -9,6 +9,7 @@ import 'package:tvf/pickfiles/pickimage.dart';
 import 'package:tvf/pickfiles/pickvideos.dart';
 import 'package:tvf/setdata/setdata.dart';
 import 'dart:io';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:random_string/random_string.dart';
@@ -42,6 +43,31 @@ class _uploadimageState extends State<uploadimage> {
     uploaddata();
     print("UPLOAD IMAGE CALLED");
   }
+
+
+
+  Future compressNow() async {
+    //_futureImage = ImagePicker.pickImage(source: ImageSource.camera);
+    //Source of the image in _futureImage
+    if(selectedimage!=null){
+      await writeCounter();
+      print("BEFORE");
+      print(selectedimage[0].lengthSync());
+      print(thumbnail.toString());
+      await FlutterImageCompress.compressAndGetFile(
+        selectedimage[0].path,thumbnail.path,
+        quality: 20,
+      );
+      print("SELECTED IMAGE SIZE ${selectedimage[0].lengthSync()}");
+      print("THUBNAIL SIZE${thumbnail.lengthSync()}");
+      thumbnail.deleteSync();
+
+    }
+    else{
+      print('SELECTED IMAGE IS NULL');
+      thumburl="https://firebasestorage.googleapis.com/v0/b/sampletvf-8aa59.appspot.com/o/defaultimage.png?alt=media&token=a2a9bb95-0809-4c09-a685-1700301cf20e";
+    }
+  }
   Future writeCounter() async {
     if(selectedimage!=null){
     var randomphotoname=randomAlphaNumeric(4);
@@ -53,7 +79,7 @@ class _uploadimageState extends State<uploadimage> {
     });}
     else{
       print('SELECTED IMAGE IS NULL');
-      thumburl="https://firebasestorage.googleapis.com/v0/b/sampletvf-8aa59.appspot.com/o/defaultimage.png?alt=media&token=a2a9bb95-0809-4c09-a685-1700301cf20e";
+      thumburl="https://firebasestorage.googleapis.com/v0/b/sampletvf-8aa59.appspot.com/o/defaultimage.png?alt=media&token=149c5ba8-58bf-429d-972a-6b664c5882ae";
     }
   }
   Future fetchcount()async {
@@ -68,29 +94,13 @@ class _uploadimageState extends State<uploadimage> {
   }
 
 
-  Future compressNow() async {
-    //_futureImage = ImagePicker.pickImage(source: ImageSource.camera);
-    //Source of the image in _futureImage
-    if(selectedimage!=null){
-      await writeCounter();
-    print("FILE SIZE BEFORE: " + thumbnail.lengthSync().toString());
-    await CompressImage.compress(imageSrc:thumbnail.path, desiredQuality: 50); //desiredQuality ranges from 0 to 100
-    print("FILE SIZE  AFTER: " + thumbnail.lengthSync().toString());
-    setState(() {
-      thumbnail;
-    });
-    }
-    else{
-      print('SELECTED IMAGE IS NULL');
-      thumburl="https://firebasestorage.googleapis.com/v0/b/sampletvf-8aa59.appspot.com/o/defaultimage.png?alt=media&token=a2a9bb95-0809-4c09-a685-1700301cf20e";
-    }
-  }
 
   uploaddata() async{
 
 
     await compressNow();
     await fetchcount();
+
     print(selectedimage);
     try{
       setState(() {
@@ -151,16 +161,22 @@ class _uploadimageState extends State<uploadimage> {
         print("Error on uploading txt $e");
       }
       // **************************************************UPLOAD THUBNAIL*********************************************************
-      try{
-        StorageReference firebasStorageRef=FirebaseStorage.instance.ref().child("blogposts").child("THUMBNAILS")
-            .child("${randomAlphaNumeric(9)}.jpg");
-        final StorageUploadTask tuploadTask=firebasStorageRef.putFile(thumbnail);
-        thumburl=await(await tuploadTask.onComplete).ref.getDownloadURL();
-        print("Storage THUMBNAIL desc URL is $thumburl");
-      }
-      catch(e){
-        print("Error on uploading THUMBNAIL $e");
-      }
+     if(thumbnail!=null){
+       try{
+         StorageReference firebasStorageRef=FirebaseStorage.instance.ref().child("blogposts").child("THUMBNAILS")
+             .child("${randomAlphaNumeric(9)}.jpg");
+         print(thumbnail);
+         final StorageUploadTask tuploadTask=firebasStorageRef.putFile(thumbnail);
+         thumburl=await(await tuploadTask.onComplete).ref.getDownloadURL();
+         print("Storage THUMBNAIL desc URL is $thumburl");
+       }
+       catch(e){
+         print("Error on uploading THUMBNAIL $e");
+       }
+     }
+     else{
+          print("DEFAULT NO IMGAGE JPG WILL BE USED");
+     }
       print("ALL UPLOAD FINISHED");
       print("Concat URL IS $downloadurlarr");
       Map <String,dynamic> blogmap={
@@ -185,6 +201,7 @@ class _uploadimageState extends State<uploadimage> {
     catch(Error){
       print("ERROR:${Error}");
     }
+
   }
   @override
   Widget build(BuildContext context) {

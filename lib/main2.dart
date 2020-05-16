@@ -6,8 +6,10 @@ import 'package:tvf/uploadfiles/uploadimage.dart';
 import 'package:video_player/video_player.dart';
 import 'pickfiles/pickimage.dart';
 import 'package:tvf/pickfiles/pickvideos.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:tvf/setdata/setdata.dart';
 import 'package:tvf/pickfiles/pickvideos.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:random_string/random_string.dart';
 import 'package:tvf/pickfiles/pickimage.dart';
 
@@ -17,18 +19,27 @@ class UploadArticle extends StatefulWidget {
 }
 final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 class _UploadArticleState extends State<UploadArticle> {
-
-
   final  authorcontrol=TextEditingController();
   final  desccontrol=TextEditingController();
   final  titlecontrol=TextEditingController();
+  static const key = "customCache";
 
+  @override
   void initState(){
-    new Directory('storage/emulated/0/tvf/').create(recursive: true);
-
+    path();
+    super.initState();
+  }
+  Future<void> path() async {
+    new Directory('storage/emulated/0/Android/data/com.tvf/cache').create(recursive: true);
     randomfilenames=randomAlphaNumeric(4);
-    flname=File('storage/emulated/0/tvf/$randomfilenames.txt');
-
+    flname=File('storage/emulated/0/Android/data/com.tvf/cache/$randomfilenames.txt');
+    print(flname);
+  }
+@override
+  void dispose() {
+     print("TXT FILE DESTROYED");
+    flname.deleteSync();
+    super.dispose();
   }
   void _showcontent() {
     showDialog(
