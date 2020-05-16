@@ -60,7 +60,7 @@ class _uploadimageState extends State<uploadimage> {
       );
       print("SELECTED IMAGE SIZE ${selectedimage[0].lengthSync()}");
       print("THUBNAIL SIZE${thumbnail.lengthSync()}");
-      thumbnail.deleteSync();
+
 
     }
     else{
@@ -163,6 +163,7 @@ class _uploadimageState extends State<uploadimage> {
       // **************************************************UPLOAD THUBNAIL*********************************************************
      if(thumbnail!=null){
        try{
+
          StorageReference firebasStorageRef=FirebaseStorage.instance.ref().child("blogposts").child("THUMBNAILS")
              .child("${randomAlphaNumeric(9)}.jpg");
          print(thumbnail);
@@ -195,6 +196,8 @@ class _uploadimageState extends State<uploadimage> {
       print("MAP CREATED");
       crudMethods.addData(blogmap).then((result){
         print("FINISHED");
+        thumbnail.deleteSync();
+        print("THUMBNAIL DELTETED FROM STORAGE");
         Navigator.pop(context,MaterialPageRoute(builder: (context) => MyApp()));
       });
     }
