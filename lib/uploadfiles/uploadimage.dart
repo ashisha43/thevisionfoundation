@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tvf/crud.dart';
 import 'package:image/image.dart' ;
-import 'package:compressimage/compressimage.dart';
 import 'package:tvf/pickfiles/pickimage.dart';
 import 'package:tvf/pickfiles/pickvideos.dart';
 import 'package:tvf/setdata/setdata.dart';
@@ -70,13 +69,13 @@ class _uploadimageState extends State<uploadimage> {
   }
   Future writeCounter() async {
     if(selectedimage!=null){
-    var randomphotoname=randomAlphaNumeric(4);
-    thumbnail=File('storage/emulated/0/tvf/$randomphotoname.jpg');
-    print("$thumbnail THUMBNAIL LOCATION ");
-    thumbnail = await selectedimage[0].copy('storage/emulated/0/tvf/$randomphotoname.jpg');
-    setState(() {
-      thumbnail;
-    });}
+      var randomphotoname=randomAlphaNumeric(4);
+      thumbnail=File('storage/emulated/0/tvf/$randomphotoname.jpg');
+      print("$thumbnail THUMBNAIL LOCATION ");
+      thumbnail = await selectedimage[0].copy('storage/emulated/0/tvf/$randomphotoname.jpg');
+      setState(() {
+        thumbnail;
+      });}
     else{
       print('SELECTED IMAGE IS NULL');
       thumburl="https://firebasestorage.googleapis.com/v0/b/sampletvf-8aa59.appspot.com/o/defaultimage.png?alt=media&token=149c5ba8-58bf-429d-972a-6b664c5882ae";
@@ -88,7 +87,7 @@ class _uploadimageState extends State<uploadimage> {
         .document('UID')
         .get()
         .then((DocumentSnapshot ds) {
-      position= ds.data['newscount'];
+      position= ds.data['newscount2'];
     });
     print("newsCOUNT IS $position");
   }
@@ -107,14 +106,14 @@ class _uploadimageState extends State<uploadimage> {
         isloading=true;
       });
       // **************************************************UPLOAD IMAGE*********************************************************
-        if(selectedimage!=null){
-          for(int i=0;i<selectedimage.length;i++){
-            print("IMAGE UPLOAD STARTED");
+      if(selectedimage!=null){
+        for(int i=0;i<selectedimage.length;i++){
+          print("IMAGE UPLOAD STARTED");
           print(1);
           StorageReference firebasStorageRef=FirebaseStorage.instance.ref().child("blogposts").child("UID")
               .child("${randomAlphaNumeric(9)}.jpg");
           print(2);
-            final StorageUploadTask uploadTask=firebasStorageRef.putFile(selectedimage[i]);
+          final StorageUploadTask uploadTask=firebasStorageRef.putFile(selectedimage[i]);
           print(3);
           print("UPLOAD STARTED");
           downloadurl=await(await uploadTask.onComplete).ref.getDownloadURL();
@@ -124,18 +123,18 @@ class _uploadimageState extends State<uploadimage> {
         }
         print("CONCAT URL IS $downloadurlarr");
       }
-        else{
-          print("Image not selected, using defualt image");
-       }
+      else{
+        print("Image not selected, using defualt image");
+      }
       // **************************************************UPLOAD VIDEO*********************************************************
-        if(selectedvideo!=null){
-          for(int i=0;i<selectedvideo.length;i++){
-            print("VIDEO UPLOAD STARTED");
+      if(selectedvideo!=null){
+        for(int i=0;i<selectedvideo.length;i++){
+          print("VIDEO UPLOAD STARTED");
           print(1);
           StorageReference firebasStorageRef=FirebaseStorage.instance.ref().child("blogposts").child("UID").child("videos")
               .child("${randomAlphaNumeric(9)}.mp4");
           print(2);
-            final StorageUploadTask vuploadTask=firebasStorageRef.putFile(selectedvideo[i]);
+          final StorageUploadTask vuploadTask=firebasStorageRef.putFile(selectedvideo[i]);
           print(3);
           print("UPLOAD STARTED");
           downloadvurl=await(await vuploadTask.onComplete).ref.getDownloadURL();
@@ -146,9 +145,9 @@ class _uploadimageState extends State<uploadimage> {
 
         print("CONCAT URL IS $downloadvurlarr");
       }
-        else{
-          print("Video not selected");
-        }
+      else{
+        print("Video not selected");
+      }
       // **************************************************UPLOAD DESCRIPTION AS TXT*********************************************************
       try{
         StorageReference firebasStorageRef=FirebaseStorage.instance.ref().child("blogposts").child("UID")
@@ -161,23 +160,23 @@ class _uploadimageState extends State<uploadimage> {
         print("Error on uploading txt $e");
       }
       // **************************************************UPLOAD THUBNAIL*********************************************************
-     if(thumbnail!=null){
-       try{
+      if(thumbnail!=null){
+        try{
 
-         StorageReference firebasStorageRef=FirebaseStorage.instance.ref().child("blogposts").child("THUMBNAILS")
-             .child("${randomAlphaNumeric(9)}.jpg");
-         print(thumbnail);
-         final StorageUploadTask tuploadTask=firebasStorageRef.putFile(thumbnail);
-         thumburl=await(await tuploadTask.onComplete).ref.getDownloadURL();
-         print("Storage THUMBNAIL desc URL is $thumburl");
-       }
-       catch(e){
-         print("Error on uploading THUMBNAIL $e");
-       }
-     }
-     else{
-          print("DEFAULT NO IMGAGE JPG WILL BE USED");
-     }
+          StorageReference firebasStorageRef=FirebaseStorage.instance.ref().child("blogposts").child("THUMBNAILS")
+              .child("${randomAlphaNumeric(9)}.jpg");
+          print(thumbnail);
+          final StorageUploadTask tuploadTask=firebasStorageRef.putFile(thumbnail);
+          thumburl=await(await tuploadTask.onComplete).ref.getDownloadURL();
+          print("Storage THUMBNAIL desc URL is $thumburl");
+        }
+        catch(e){
+          print("Error on uploading THUMBNAIL $e");
+        }
+      }
+      else{
+        print("DEFAULT NO IMGAGE JPG WILL BE USED");
+      }
       print("ALL UPLOAD FINISHED");
       print("Concat URL IS $downloadurlarr");
       Map <String,dynamic> blogmap={
@@ -186,19 +185,25 @@ class _uploadimageState extends State<uploadimage> {
         "desctexturl":txtdownloadurl,
         "description":setdesc.desc,
         "imageurls":downloadurlarr,
-        "videourls":downloadvurlarr,
-        "isPending":isPending,
-        "isPublished":isPending,
-        "isSuspended":isSuspended,
+        "videourl":downloadvurlarr,
+        "isPending":true,
+        "isPublished":false,
+        "isSuspended":false,
         "thumbnailurl":thumburl,
         "position":position,
+        'timeStamp': FieldValue.serverTimestamp(),
+        'UID':"vSaF2smriYn7CCgdyXhb"
       };
       print("MAP CREATED");
       crudMethods.addData(blogmap).then((result){
         print("FINISHED");
-        if(thumbnail!=null){thumbnail.deleteSync();}
+        if(thumbnail!=null){
+          thumbnail.deleteSync();
+        }
+
         print("THUMBNAIL DELTETED FROM STORAGE");
-        Navigator.pop(context,MaterialPageRoute(builder: (context) => MyApp()));
+        Navigator.of(context).pushNamedAndRemoveUntil('/CreatorDashboad',ModalRoute.withName('/CreatorDashboad'));
+
       });
     }
     catch(Error){
@@ -211,40 +216,29 @@ class _uploadimageState extends State<uploadimage> {
     return  MaterialApp(
       title: "appTitle",
       home: Scaffold(
-        appBar: AppBar(
-          title: Text("text"),
-        ),
-        body: Center(child:
-            isloading != true? Text("UPLOAD WILL START SOON"):
+          appBar: AppBar(
+            title: Text("text"),
+          ),
+          body: Center(child:
+          isloading != true? Text("UPLOAD WILL START SOON"):
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-             Text("UPLOADING...."),
-             Container(
-               width: 100,
-               height: 100,
+              Text("UPLOADING...."),
+              Container(
+                width: 100,
+                height: 100,
 
-                 child: CircularProgressIndicator(),
+                child: CircularProgressIndicator(),
 
-             )
+              )
             ],
           )
 
-        )
+          )
       ),
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
 

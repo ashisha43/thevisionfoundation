@@ -24,6 +24,6 @@ class setdesc {
   Future writeCounter() async {
     print("write counter CALEED");
     final file = await flname;
-     file.writeAsString(desc);
+    file.writeAsString(desc);
   }
 }

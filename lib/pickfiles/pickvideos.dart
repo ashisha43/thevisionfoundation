@@ -47,9 +47,9 @@ class _pickvideoState extends State<pickvideo> {
           ],
         ),
         body: FutureBuilder(builder:( BuildContext context, AsyncSnapshot snapshot){
-        if(videopicked){
-          initializeplayer();
-        }
+          if(videopicked){
+            initializeplayer();
+          }
           return  Center(
               child:selectedvideo==null? Text("VIDEO is not SELECTED")
                   :Container(

@@ -20,7 +20,10 @@ class _AdminDashboardState extends State<AdminDashboard> {
   List<String> _imageurls = [];
   List<String> _titleurls = [];
   List<String> _desctexturl = [];
+  List<String> _videourl = [];
+  List<String>thumbnailurl=[];
   List<int> _position = [];
+
   List<String>_postUid=[];
   int _newsCount;
   String image;
@@ -114,10 +117,10 @@ class _AdminDashboardState extends State<AdminDashboard> {
                           else
                             return Center(child: Text("No More Data"));
                         }
-                        List<String> arr = _imageurls[index].split(" ");
-                        String imagetitle = arr[1];
+
+
                         return cardview(_imageurls[index], _titleurls[index],
-                            _desctexturl[index], _position[index], imagetitle,_postUid[index]);
+                            _desctexturl[index], _position[index], thumbnailurl[index],_postUid[index],_videourl[index]);
                       },
                     ),
 
@@ -133,7 +136,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
   }
 
   Widget cardview(String _imageurl, String _titleurl, String _desurl,
-      int _position, String imagetitle,String postUid) {
+      int _position, String imagetitle,String postUid,String videourl) {
     return StreamBuilder(
         stream: Firestore.instance.collection('blogs').document(
             'news' + '$_position').snapshots(),
@@ -155,7 +158,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
                       SetData.imageurl = _imageurl;
                       SetData.titleurl = _titleurl;
                       SetData.psotUid= postUid;
-
+                      SetData.videoUrl=videourl;
+                      print(videourl);
 
                       Navigator.push(context,
                         MaterialPageRoute(builder: (context) => ShowContent(),
@@ -360,6 +364,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
               _position.add(ds.data['position']);
               _imageurls.add(ds.data['imageurls']);
               _postUid.add(ds.data['UID']);
+              _videourl.add(ds.data['videourl']);
+              thumbnailurl.add(ds.data['thumbnailurl']);
             });
           });
           print(i);
@@ -373,7 +379,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
   }
 
   void SetTrue(int position) {
-     Firestore.instance
+    try{ Firestore.instance
         .collection('blogs')
         .document('news' + "$position")
         .updateData({
@@ -382,11 +388,14 @@ class _AdminDashboardState extends State<AdminDashboard> {
       'isPending': false
     }
 
-    );
+    );}
+    catch(e){
+      print(e);
+    }
   }
 
   void SetFalse(int position)  {
-     Firestore.instance
+     try{Firestore.instance
         .collection('blogs')
         .document('news' + "$position")
         .updateData({
@@ -395,13 +404,21 @@ class _AdminDashboardState extends State<AdminDashboard> {
       'isPending': false
     }
 
-    );
+    );}
+    catch(e)
+    {
+      print(e);
+    }
   }
 
   void deletePost(int position)  {
-    Firestore.instance
+    try{Firestore.instance
         .collection('blogs')
-        .document('news' + "$position").delete();
+        .document('news' + "$position").delete();}
+        catch(e)
+    {
+      print(e);
+    }
   }
 
   void _shownDeleteDialog(int position, String title) {

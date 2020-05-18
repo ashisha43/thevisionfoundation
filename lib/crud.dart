@@ -1,13 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+
 class CrudMethods{
-int newscount=0;
+  int newscount=0;
   Future fetchcount()async {
     await Firestore.instance
         .collection('blogs')
         .document('UID')
         .get()
         .then((DocumentSnapshot ds) {
-     newscount= ds.data['newscount'];
+     newscount= ds.data['newscount2'];
     });
 print("newsCOUNT IS $newscount");
   }
@@ -20,7 +22,7 @@ print("newsCOUNT IS $newscount");
     });
     newscount=newscount+1;
     //CHECK
-    Firestore.instance.collection("blogs").document("UID").updateData({'newscount':newscount}).catchError((e){
+    Firestore.instance.collection("blogs").document("UID").updateData({'newscount2':newscount}).catchError((e){
       print(e);
     });
     await Firestore.instance
@@ -28,7 +30,7 @@ print("newsCOUNT IS $newscount");
         .document('UID')
         .get()
         .then((DocumentSnapshot ds) {
-      newscount= ds.data['newscount'];
+      newscount= ds.data['newscount2'];
     });
     print("NEWSCOUNT IS $newscount");
     print("Database upload finished");

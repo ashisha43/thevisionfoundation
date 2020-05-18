@@ -22,6 +22,8 @@ class _ShowNewsDashboardState extends State<ShowNewsDashboard> {
   List<String> _titleurls=[];
   List<String> _desctexturl=[];
   List<String> imageCarouselSlider=[];
+  List<String>_videourl=[];
+  List<String>thumbnailurl=[];
   int _newsCount;
   bool isLoaded=false;
 
@@ -170,9 +172,8 @@ class _ShowNewsDashboardState extends State<ShowNewsDashboard> {
                   return Center(child: CircularProgressIndicator());
                 else return  Center(child: Text("No More Data"));
               }
-              List<String> arr=_imageurls[index].split(" ");
-              String imagetitle=arr[1];
-              return cardview(_imageurls[index],_titleurls[index],_desctexturl[index],imagetitle);
+
+              return cardview(_imageurls[index],_titleurls[index],_desctexturl[index],thumbnailurl[index],_videourl[index]);
             },
           ),
 
@@ -199,7 +200,7 @@ class _ShowNewsDashboardState extends State<ShowNewsDashboard> {
     );
   }
 
-  Widget cardview(String _imageurl,String _titleurl,String _desurl,imagetitle) {
+  Widget cardview(String _imageurl,String _titleurl,String _desurl,imagetitle,String videourl) {
     return Container(
       child: new Card(
         shape: RoundedRectangleBorder(
@@ -213,11 +214,9 @@ class _ShowNewsDashboardState extends State<ShowNewsDashboard> {
             SetData.desurl=_desurl;
             SetData.imageurl=_imageurl;
             SetData.titleurl=_titleurl;
+            SetData.videoUrl=videourl;
+           Navigator.of(context).pushNamed("/ShowContent");
 
-            Navigator.push(context,
-              MaterialPageRoute(builder: (context) => ShowContent(),
-              ),
-            );
           },
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -310,9 +309,10 @@ class _ShowNewsDashboardState extends State<ShowNewsDashboard> {
   }
   Future permission() async {
     final PermissionHandler _permissionHandler = PermissionHandler();
+
     var result = await _permissionHandler.requestPermissions(
         [PermissionGroup.storage]);
-    PermissionStatus permission = await PermissionHandler()
+      PermissionStatus permission = await PermissionHandler()
         .checkPermissionStatus(PermissionGroup.storage);
     if (permission != PermissionStatus.granted) {
 
@@ -338,6 +338,8 @@ class _ShowNewsDashboardState extends State<ShowNewsDashboard> {
             _titleurls.add(ds.data['title']);
             _desctexturl.add(ds.data['desctexturl']);
             _imageurls.add(ds.data['imageurls']);
+            _videourl.add(ds.data['videourl']);
+            thumbnailurl.add(ds.data["thumbnailurl"]);
 
           });}
               else{
@@ -355,6 +357,7 @@ class _ShowNewsDashboardState extends State<ShowNewsDashboard> {
 
       }
     });
+
     _fatchCarouselSliderimage();
 
   }
@@ -379,8 +382,8 @@ class _ShowNewsDashboardState extends State<ShowNewsDashboard> {
   void _fatchCarouselSliderimage() {
     for(int i=0;i<5;i++){
       setState(() {
-        List<String> arr=_imageurls[i].split(" ");
-        imageCarouselSlider.add(arr[1]);
+
+        imageCarouselSlider.add(thumbnailurl[i]);
       });
 
     }

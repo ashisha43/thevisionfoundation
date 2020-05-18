@@ -6,7 +6,6 @@ import 'package:tvf/uploadfiles/uploadimage.dart';
 import 'package:video_player/video_player.dart';
 import 'pickfiles/pickimage.dart';
 import 'package:tvf/pickfiles/pickvideos.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:tvf/setdata/setdata.dart';
 import 'package:tvf/pickfiles/pickvideos.dart';
 import 'package:path_provider/path_provider.dart';
@@ -36,9 +35,9 @@ class _UploadArticleState extends State<UploadArticle> {
     flname=File('storage/emulated/0/Android/data/com.tvf/cache/$randomfilenames.txt');
     print(flname);
   }
-@override
+  @override
   void dispose() {
-     print("TXT FILE DESTROYED");
+    print("TXT FILE DESTROYED");
     flname.deleteSync();
     super.dispose();
   }
@@ -119,7 +118,7 @@ class _UploadArticleState extends State<UploadArticle> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
+        key: _scaffoldKey,
         appBar: AppBar(
           backgroundColor: Colors.blue,
           title: Text("CREATE POST"),
@@ -134,10 +133,10 @@ class _UploadArticleState extends State<UploadArticle> {
               onPressed: (){
                 checkvalidation();
                 if(allvalid){
-                   _showcontent();
+                  _showcontent();
                 }
 
-                 // Navigator.push(context,MaterialPageRoute(builder: (context) => uploadimage()));
+                // Navigator.push(context,MaterialPageRoute(builder: (context) => uploadimage()));
 
               },
             )
@@ -180,19 +179,19 @@ class _UploadArticleState extends State<UploadArticle> {
                           width: MediaQuery. of(context). size. width,
                           child:
                           Card(
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: new BorderRadius.circular(18.0),
-                                  side: BorderSide(color: Colors.blue)
-                              ),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: new BorderRadius.circular(18.0),
+                                side: BorderSide(color: Colors.blue)
+                            ),
                             child:  TextField(
-                              controller: authorcontrol,
+                                controller: authorcontrol,
 
                                 decoration: InputDecoration(
                                     hintText: "  AUTHOR NAME"
                                 ),
                                 onChanged: (val){
-                                 setauthor(val);
-                                 print(setauthor.author);
+                                  setauthor(val);
+                                  print(setauthor.author);
                                 }
 
                             ),
@@ -207,12 +206,12 @@ class _UploadArticleState extends State<UploadArticle> {
                           Card(
 
                             shape: RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(18.0),
-                           side: BorderSide(color: Colors.blue)
+                                borderRadius: new BorderRadius.circular(18.0),
+                                side: BorderSide(color: Colors.blue)
                             ) ,
                             child:  TextField(
-                              controller: desccontrol,
-                              autofocus: false,
+                                controller: desccontrol,
+                                autofocus: false,
                                 maxLines: 10,
                                 decoration: InputDecoration(
                                     hintText: "  DESCRIPTION"
@@ -237,7 +236,7 @@ class _UploadArticleState extends State<UploadArticle> {
                             child:Center(
                                 child:selectedimage==null? Text("Image not Attached")
                                     :Container(
-                                  padding: EdgeInsets.only(left:10,right:10,bottom:10,top: 10),
+                                    padding: EdgeInsets.only(left:10,right:10,bottom:10,top: 10),
                                     child: new GridView.builder(
                                         itemCount: selectedimage.length,
                                         gridDelegate:
@@ -254,44 +253,44 @@ class _UploadArticleState extends State<UploadArticle> {
 
                           )
                       ),
-                                    FutureBuilder(builder:( BuildContext context, AsyncSnapshot snapshot){
+                      FutureBuilder(builder:( BuildContext context, AsyncSnapshot snapshot){
 
-                                      return Container(
-                                          height: 160,
-                                          width: MediaQuery. of(context). size. width,
-                                          child:Card(
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius: new BorderRadius.circular(18.0),
-                                                side: BorderSide(color: Colors.blue)
-                                            ),
-                                            child:Center(
-                                                child:selectedvideo==null? Text("VIDEO is not SELECTED")
-                                                    :Container(
-                                                    child: new GridView.builder(
-                                                        itemCount: selectedvideo.length,
-                                                        gridDelegate:
-                                                        new SliverGridDelegateWithFixedCrossAxisCount(
-                                                            crossAxisCount: 3),
-                                                        itemBuilder: (BuildContext context, int index) {
-                                                          return Container(
-                                                            child:vcontroller[index].value.initialized
-                                                                ?AspectRatio(
-                                                              aspectRatio:vcontroller[index].value.aspectRatio ,
-                                                              child: VideoPlayer(vcontroller[index]),
-                                                            )
-                                                                :Container()
-                                                            ,
-                                                          );
-                                                        }
-                                                    )
+                        return Container(
+                            height: 160,
+                            width: MediaQuery. of(context). size. width,
+                            child:Card(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: new BorderRadius.circular(18.0),
+                                    side: BorderSide(color: Colors.blue)
+                                ),
+                                child:Center(
+                                    child:selectedvideo==null? Text("VIDEO is not SELECTED")
+                                        :Container(
+                                        child: new GridView.builder(
+                                            itemCount: selectedvideo.length,
+                                            gridDelegate:
+                                            new SliverGridDelegateWithFixedCrossAxisCount(
+                                                crossAxisCount: 3),
+                                            itemBuilder: (BuildContext context, int index) {
+                                              return Container(
+                                                child:vcontroller[index].value.initialized
+                                                    ?AspectRatio(
+                                                  aspectRatio:vcontroller[index].value.aspectRatio ,
+                                                  child: VideoPlayer(vcontroller[index]),
                                                 )
-                                            )
+                                                    :Container()
+                                                ,
+                                              );
+                                            }
+                                        )
+                                    )
+                                )
 
-                                          )
-                                      ) ;
-                                    })
+                            )
+                        ) ;
+                      })
 
-                           ],
+                    ],
                   ),
                 )
             )

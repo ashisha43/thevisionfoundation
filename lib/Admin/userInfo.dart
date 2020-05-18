@@ -13,6 +13,8 @@ class _UserInfoPageState extends State<UserInfoPage> {
   List<String> _imageurls = [];
   List<String> _titleurls = [];
   List<String> _desctexturl = [];
+  List<String> _videourl = [];
+  List<String>thumbnailurl=[];
   List<int> _position = [];
   String image;
   int publishCount=0;
@@ -162,11 +164,10 @@ class _UserInfoPageState extends State<UserInfoPage> {
                 else
                   return Center(child: Text("No More Data"));
               }
-              List<String> arr = _imageurls[index].split(" ");
-              String imagetitle = arr[1];
+
               return cardview(
                   _imageurls[index], _titleurls[index], _desctexturl[index],
-                  _position[index], imagetitle);
+                  _position[index], thumbnailurl[index],_videourl[index]);
             },
           ),
 
@@ -181,7 +182,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
     try {
       Firestore.instance
           .collection('blogs')
-          .where("UID", isEqualTo: SetData.psotUid)
+          .where("UID", isEqualTo: SetData.psotUid).orderBy("timeStamp",descending: true)
           .snapshots()
           .listen((data) =>
           data.documents.forEach((doc) =>
@@ -190,6 +191,9 @@ class _UserInfoPageState extends State<UserInfoPage> {
                 _imageurls.add(doc['imageurls']);
                 _position.add(doc['position']);
                 _desctexturl.add(doc['desctexturl']);
+                _videourl.add(doc['videourl']);
+                thumbnailurl.add(doc['thumbnailurl']);
+
                 print(doc['position']);
                 print(doc['title']);
               })
@@ -216,7 +220,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
   }
 
   Widget cardview(String _imageurl, String _titleurl, String _desurl,
-      int _position, String imagetitle) {
+      int _position, String imagetitle,String videourl) {
     return StreamBuilder(
         stream: Firestore.instance.collection('blogs').document(
             'news' + '$_position').snapshots(),
@@ -237,6 +241,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
                       SetData.desurl = _desurl;
                       SetData.imageurl = _imageurl;
                       SetData.titleurl = _titleurl;
+                      SetData.videoUrl=videourl;
 
                       Navigator.push(context,
                         MaterialPageRoute(builder: (context) => ShowContent(),
