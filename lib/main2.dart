@@ -31,6 +31,7 @@ class _UploadArticleState extends State<UploadArticle> {
   }
   Future<void> path() async {
     new Directory('storage/emulated/0/Android/data/com.tvf/cache').create(recursive: true);
+    new Directory('storage/emulated/0/tvf').create(recursive: true);
     randomfilenames=randomAlphaNumeric(4);
     flname=File('storage/emulated/0/Android/data/com.tvf/cache/$randomfilenames.txt');
     print(flname);

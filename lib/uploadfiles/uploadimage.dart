@@ -196,7 +196,7 @@ class _uploadimageState extends State<uploadimage> {
       print("MAP CREATED");
       crudMethods.addData(blogmap).then((result){
         print("FINISHED");
-        thumbnail.deleteSync();
+        if(thumbnail!=null){thumbnail.deleteSync();}
         print("THUMBNAIL DELTETED FROM STORAGE");
         Navigator.pop(context,MaterialPageRoute(builder: (context) => MyApp()));
       });
