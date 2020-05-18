@@ -37,12 +37,16 @@ class _ShowContentState extends State<ShowContent> {
 
       }
    // videourl[1]=="false"?null:_initvideoplayercontrolle();
-
-    List<String> arr=imageurl.split(" ");
-    setState(() {
-      for(int i=1;i<arr.length;i++)
+    print("imsgr lrmgth "+"${SetData.imageurl.length}");
+if(SetData.imageurl.length!=0){
+  List<String> arr=imageurl.split(" ");
+  setState(() {
+    for(int i=1;i<arr.length;i++)
       images.add(arr[i]);
-    });
+  });
+
+}
+
 
     // TODO: implement initState
     super.initState();
@@ -70,7 +74,7 @@ class _ShowContentState extends State<ShowContent> {
                 fontSize: 28,
                 fontWeight: FontWeight.bold
               ),),
-              Stack(
+              imageurl.length==0?Container():Stack(
                 children: <Widget>[
                   Container(
                       height: MediaQuery.of(context).size.height*.35,

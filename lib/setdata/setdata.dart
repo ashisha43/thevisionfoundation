@@ -1,6 +1,5 @@
 import 'dart:io';
-import 'package:path_provider/path_provider.dart';
-import 'package:random_string/random_string.dart';
+
 String randomfilenames;
 File flname;
 class settitle{
@@ -25,6 +24,6 @@ class setdesc {
   Future writeCounter() async {
     print("write counter CALEED");
     final file = await flname;
-     file.writeAsString(desc);
+    file.writeAsString(desc);
   }
 }

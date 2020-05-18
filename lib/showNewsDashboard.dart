@@ -172,9 +172,8 @@ class _ShowNewsDashboardState extends State<ShowNewsDashboard> {
                   return Center(child: CircularProgressIndicator());
                 else return  Center(child: Text("No More Data"));
               }
-              List<String> arr=thumbnailurl[index].split(" ");
-              String imagetitle=arr[1];
-              return cardview(_imageurls[index],_titleurls[index],_desctexturl[index],imagetitle,_videourl[index]);
+
+              return cardview(_imageurls[index],_titleurls[index],_desctexturl[index],thumbnailurl[index],_videourl[index]);
             },
           ),
 
@@ -216,11 +215,8 @@ class _ShowNewsDashboardState extends State<ShowNewsDashboard> {
             SetData.imageurl=_imageurl;
             SetData.titleurl=_titleurl;
             SetData.videoUrl=videourl;
+           Navigator.of(context).pushNamed("/ShowContent");
 
-            Navigator.push(context,
-              MaterialPageRoute(builder: (context) => ShowContent(),
-              ),
-            );
           },
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -313,9 +309,10 @@ class _ShowNewsDashboardState extends State<ShowNewsDashboard> {
   }
   Future permission() async {
     final PermissionHandler _permissionHandler = PermissionHandler();
+
     var result = await _permissionHandler.requestPermissions(
         [PermissionGroup.storage]);
-    PermissionStatus permission = await PermissionHandler()
+      PermissionStatus permission = await PermissionHandler()
         .checkPermissionStatus(PermissionGroup.storage);
     if (permission != PermissionStatus.granted) {
 
@@ -360,6 +357,7 @@ class _ShowNewsDashboardState extends State<ShowNewsDashboard> {
 
       }
     });
+
     _fatchCarouselSliderimage();
 
   }
@@ -384,8 +382,8 @@ class _ShowNewsDashboardState extends State<ShowNewsDashboard> {
   void _fatchCarouselSliderimage() {
     for(int i=0;i<5;i++){
       setState(() {
-        List<String> arr=_imageurls[i].split(" ");
-        imageCarouselSlider.add(arr[1]);
+
+        imageCarouselSlider.add(thumbnailurl[i]);
       });
 
     }

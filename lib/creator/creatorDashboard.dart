@@ -144,11 +144,10 @@ class _CreatorDashboadState extends State<CreatorDashboad> {
                 else
                   return Center(child: Text("No More Data"));
               }
-              List<String> arr = thumbnailurl[index].split(" ");
-              String imagetitle = arr[1];
+
               return cardview(
                   _imageurls[index], _titleurls[index], _desctexturl[index],
-                  _position[index], imagetitle,_videourl[index]);
+                  _position[index], thumbnailurl[index],_videourl[index]);
             },
           ),
 
@@ -170,7 +169,7 @@ class _CreatorDashboadState extends State<CreatorDashboad> {
     try {
       Firestore.instance
           .collection('blogs')
-          .where("UID", isEqualTo: "vSaF2smriYn7CCgdyXhb")
+          .where("UID", isEqualTo: "vSaF2smriYn7CCgdyXhb").orderBy("timeStamp",descending: true)
           .snapshots()
           .listen((data) =>
           data.documents.forEach((doc) =>

@@ -117,10 +117,10 @@ class _AdminDashboardState extends State<AdminDashboard> {
                           else
                             return Center(child: Text("No More Data"));
                         }
-                        List<String> arr = thumbnailurl[index].split(" ");
-                        String imagetitle = arr[1];
+
+
                         return cardview(_imageurls[index], _titleurls[index],
-                            _desctexturl[index], _position[index], imagetitle,_postUid[index],_videourl[index]);
+                            _desctexturl[index], _position[index], thumbnailurl[index],_postUid[index],_videourl[index]);
                       },
                     ),
 
@@ -379,7 +379,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
   }
 
   void SetTrue(int position) {
-     Firestore.instance
+    try{ Firestore.instance
         .collection('blogs')
         .document('news' + "$position")
         .updateData({
@@ -388,11 +388,14 @@ class _AdminDashboardState extends State<AdminDashboard> {
       'isPending': false
     }
 
-    );
+    );}
+    catch(e){
+      print(e);
+    }
   }
 
   void SetFalse(int position)  {
-     Firestore.instance
+     try{Firestore.instance
         .collection('blogs')
         .document('news' + "$position")
         .updateData({
@@ -401,13 +404,21 @@ class _AdminDashboardState extends State<AdminDashboard> {
       'isPending': false
     }
 
-    );
+    );}
+    catch(e)
+    {
+      print(e);
+    }
   }
 
   void deletePost(int position)  {
-    Firestore.instance
+    try{Firestore.instance
         .collection('blogs')
-        .document('news' + "$position").delete();
+        .document('news' + "$position").delete();}
+        catch(e)
+    {
+      print(e);
+    }
   }
 
   void _shownDeleteDialog(int position, String title) {

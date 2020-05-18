@@ -164,11 +164,10 @@ class _UserInfoPageState extends State<UserInfoPage> {
                 else
                   return Center(child: Text("No More Data"));
               }
-              List<String> arr = thumbnailurl[index].split(" ");
-              String imagetitle = arr[1];
+
               return cardview(
                   _imageurls[index], _titleurls[index], _desctexturl[index],
-                  _position[index], imagetitle,_videourl[index]);
+                  _position[index], thumbnailurl[index],_videourl[index]);
             },
           ),
 
@@ -183,7 +182,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
     try {
       Firestore.instance
           .collection('blogs')
-          .where("UID", isEqualTo: SetData.psotUid)
+          .where("UID", isEqualTo: SetData.psotUid).orderBy("timeStamp",descending: true)
           .snapshots()
           .listen((data) =>
           data.documents.forEach((doc) =>

@@ -29,7 +29,7 @@ void CreateData() async {
           .document("news"+"$i")
           .updateData({
 
-        "videourl":""
+        "thumbnailurl":"https://firebasestorage.googleapis.com/v0/b/sampletvf-8aa59.appspot.com/o/images%2F1.webp?alt=media&token=e5ae4fb5-9eaf-421c-b640-e2454f706685"
       }
 
       );}

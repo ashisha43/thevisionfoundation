@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:tvf/Admin/userInfo.dart';
 import 'package:tvf/Admin/userslist.dart';
 import 'package:tvf/pushtofirebase.dart';
+import 'package:tvf/showContent.dart';
+import 'package:tvf/uploadfiles/uploadimage.dart';
 import 'Admin/admin.dart';
 import 'creator/creatorDashboard.dart';
 import 'main2.dart';
@@ -37,6 +39,9 @@ class MyApp extends StatelessWidget {
         '/Create Post': (BuildContext context) => new UploadArticle(),
         '/UserInfoPage':(BuildContext context) => new UserInfoPage(),
         '/UserList':(BuildContext context) => new UsersList(),
+        '/UploadImage':(BuildContext context) => new uploadimage(),
+        '/ShowContent':(BuildContext context)=>new ShowContent()
+
 
       },
 
