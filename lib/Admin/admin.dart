@@ -23,6 +23,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
   List<String> _videourl = [];
   List<String>thumbnailurl=[];
   List<int> _position = [];
+  int fatchedCount;
+  bool isdeletd=false;
 
   List<String>_postUid=[];
   int _newsCount;
@@ -105,7 +107,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   controller: _scrollController,
 
                   children: <Widget>[
-                    ListView.builder(
+                isdeletd?Center(child: CircularProgressIndicator()): ListView.builder(
                       controller: _scrollController2,
 
                       shrinkWrap: true,
@@ -282,8 +284,10 @@ class _AdminDashboardState extends State<AdminDashboard> {
           else {
             return Container();
           }
+
         }
     );
+
   }
 
   Widget DropdownMenu(BuildContext context) {
@@ -312,7 +316,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
   void _getMoreData() {
     if (_newsCount > 0) {
       setState(() {
-        _newsCount = _newsCount - 10;
+        _newsCount = fatchedCount-1;
         _fatchlistcontent();
       });
     }
@@ -346,12 +350,14 @@ class _AdminDashboardState extends State<AdminDashboard> {
   }
 
   Future _fatchlistcontent() async {
+    int count=0;
     await Firestore.instance
         .collection('blogs')
         .document('UID')
         .get()
         .then((DocumentSnapshot ds) async {
-      for (int i = _newsCount; i > _newsCount - 10; i--) {
+      for (int i = _newsCount; i >=0; i--) {
+
         try {
           await Firestore.instance
               .collection('blogs')
@@ -366,6 +372,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
               _postUid.add(ds.data['UID']);
               _videourl.add(ds.data['videourl']);
               thumbnailurl.add(ds.data['thumbnailurl']);
+              fatchedCount=i;
+              count++;
             });
           });
           print(i);
@@ -374,6 +382,10 @@ class _AdminDashboardState extends State<AdminDashboard> {
           print("Position Number" + " $i " + "Not Fatched");
           continue;
         }
+        if(count==10)
+          {
+            break;
+          }
       }
     });
   }
@@ -411,14 +423,17 @@ class _AdminDashboardState extends State<AdminDashboard> {
     }
   }
 
-  void deletePost(int position)  {
-    try{Firestore.instance
+  void deletePost(int position) async {
+    try{await Firestore.instance
         .collection('blogs')
         .document('news' + "$position").delete();}
         catch(e)
     {
       print(e);
     }
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(
+        builder: (BuildContext context) => AdminDashboard()));
   }
 
   void _shownDeleteDialog(int position, String title) {
@@ -444,11 +459,13 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   child: new Text("OK"),
                   color: Colors.green,
                   onPressed: () {
-                    deletePost(position);
+
                     Navigator.of(context).pop();
-                    Navigator.pushReplacement(
-                        context, MaterialPageRoute(
-                        builder: (BuildContext context) => AdminDashboard()));
+                    setState(() {
+                      isdeletd=true;
+                    });
+                    deletePost(position);
+
                   },
                 ),
                 Padding(

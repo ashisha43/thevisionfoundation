@@ -20,8 +20,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: ShowNewsDashboard(),
-      //ShowContent(),
+      home:ShowNewsDashboard(),
+      // ShowContent(),
       //AuthService().handleAuth(),
       //AdminDashboard(),
       //CreatorDashboad(),

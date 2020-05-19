@@ -18,16 +18,31 @@ class UploadArticle extends StatefulWidget {
 }
 final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 class _UploadArticleState extends State<UploadArticle> {
-  final  authorcontrol=TextEditingController();
-  final  desccontrol=TextEditingController();
-  final  titlecontrol=TextEditingController();
+  TextEditingController  authorcontrol=TextEditingController();
+    TextEditingController desccontrol=TextEditingController();
+    TextEditingController titlecontrol=TextEditingController();
+
   static const key = "customCache";
 
   @override
   void initState(){
     path();
+      //selectedimage.clear();
+    if(selectedvideo!=null)
+      {
+        selectedvideo.clear();
+      }
+    if(selectedimage!=null){
+      selectedimage.clear();
+    }
+
+    authorcontrol.clear();
+    desccontrol.clear();
+    titlecontrol.clear();
     super.initState();
   }
+
+
   Future<void> path() async {
     new Directory('storage/emulated/0/Android/data/com.tvf/cache').create(recursive: true);
     new Directory('storage/emulated/0/tvf').create(recursive: true);
@@ -238,6 +253,7 @@ class _UploadArticleState extends State<UploadArticle> {
                                     :Container(
                                     padding: EdgeInsets.only(left:10,right:10,bottom:10,top: 10),
                                     child: new GridView.builder(
+
                                         itemCount: selectedimage.length,
                                         gridDelegate:
                                         new SliverGridDelegateWithFixedCrossAxisCount(

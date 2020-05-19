@@ -55,6 +55,12 @@ if(SetData.imageurl.length!=0){
     http();
 
   }
+ @override
+  void dispose() {
+    // TODO: implement dispose
+   _controller.dispose();
+    super.dispose();
+  }
 
 
   @override

@@ -26,7 +26,7 @@ class _ShowNewsDashboardState extends State<ShowNewsDashboard> {
   List<String>thumbnailurl=[];
   int _newsCount;
   bool isLoaded=false;
-
+int fatchedcount=0;
 
   ScrollController _scrollController=ScrollController();
   ScrollController _scrollController2=ScrollController();
@@ -279,10 +279,11 @@ class _ShowNewsDashboardState extends State<ShowNewsDashboard> {
     );
   }
   void _getMoreData() {
+    print(fatchedcount);
     if(_newsCount>0)
     {
       setState(() {
-        _newsCount=_newsCount-10;
+        _newsCount=fatchedcount-1;
         _fatchlistcontent();
       });
     }
@@ -312,51 +313,64 @@ class _ShowNewsDashboardState extends State<ShowNewsDashboard> {
 
     var result = await _permissionHandler.requestPermissions(
         [PermissionGroup.storage]);
-      PermissionStatus permission = await PermissionHandler()
+    PermissionStatus permission = await PermissionHandler()
         .checkPermissionStatus(PermissionGroup.storage);
     if (permission != PermissionStatus.granted) {
 
     }
   }
-  Future _fatchlistcontent()async{
-    await Firestore.instance
+  Future _fatchlistcontent()async {
+    int count=0;
+    try{
+      await Firestore.instance
         .collection('blogs')
         .document('UID')
         .get()
-        .then((DocumentSnapshot ds)async {
+        .then((DocumentSnapshot ds) async {
+      for (int i = _newsCount; i >=0; i--) {
+        try {
+          await Firestore.instance
+              .collection('blogs')
+              .document('news' + '$i')
+              .get()
+              .then((DocumentSnapshot ds) {
+            if (ds.data['isPublished']) {
+              setState(() {
+                _titleurls.add(ds.data['title']);
+                _desctexturl.add(ds.data['desctexturl']);
+                _imageurls.add(ds.data['imageurls']);
+                _videourl.add(ds.data['videourl']);
+                thumbnailurl.add(ds.data["thumbnailurl"]);
+                fatchedcount=i;
+                print(i);
+                count++;
+                print("count is"+'$count');
 
-
-      for( int i=_newsCount;i>_newsCount-10;i--)
-      {
-       try{  await Firestore.instance
-            .collection('blogs')
-            .document('news'+'$i')
-            .get()
-            .then((DocumentSnapshot ds) {
-              if(ds.data['isPublished']){
-          setState(() {
-            _titleurls.add(ds.data['title']);
-            _desctexturl.add(ds.data['desctexturl']);
-            _imageurls.add(ds.data['imageurls']);
-            _videourl.add(ds.data['videourl']);
-            thumbnailurl.add(ds.data["thumbnailurl"]);
-
-          });}
-              else{
-                print("Position Number"+" $i "+"Not Published");
-              }
-
-        });
-        print(i);}
-        catch(e){
-         print("Position Number"+" $i "+"Not Fatched");
-         continue;
-
+              });
+            }
+            else {
+              print("Position Number" + " $i " + "Not Published");
+            }
+          });
+        }
+        catch (e) {
+          print("Position Number" + " $i " + "Not Fatched");
+            continue;
         }
 
 
+
+        if(count==10){
+          break;
+
+        }
+
       }
     });
+  }
+  catch(e){
+      print(e);
+  }
 
     _fatchCarouselSliderimage();
 
@@ -380,11 +394,15 @@ class _ShowNewsDashboardState extends State<ShowNewsDashboard> {
   }
 
   void _fatchCarouselSliderimage() {
-    for(int i=0;i<5;i++){
-      setState(() {
 
+    for(int i=0;i<5;i++){
+
+      setState(() {
         imageCarouselSlider.add(thumbnailurl[i]);
+
+
       });
+
 
     }
 
