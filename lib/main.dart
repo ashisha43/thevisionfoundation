@@ -9,7 +9,10 @@ import 'creator/creatorDashboard.dart';
 import 'main2.dart';
 import 'showNewsDashboard.dart';
 
+
+
 void main() => runApp(MyApp());
+
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -17,8 +20,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: ShowNewsDashboard(),
-      //ShowContent(),
+      home://ShowNewsDashboard(),
+      // ShowContent(),
       //AuthService().handleAuth(),
       //AdminDashboard(),
       //CreatorDashboad(),
@@ -28,6 +31,7 @@ class MyApp extends StatelessWidget {
       //pvideo(),
       //initialRoute:'/ShowNewsDashboard' ,
       //PushdatatoFirebase(),
+      UploadArticle(),
 
       routes: <String, WidgetBuilder> {
         '/ShowNewsDashboard': (BuildContext context) => new ShowNewsDashboard(),

@@ -18,16 +18,31 @@ class UploadArticle extends StatefulWidget {
 }
 final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 class _UploadArticleState extends State<UploadArticle> {
-  final  authorcontrol=TextEditingController();
-  final  desccontrol=TextEditingController();
-  final  titlecontrol=TextEditingController();
+  TextEditingController  authorcontrol=TextEditingController();
+    TextEditingController desccontrol=TextEditingController();
+    TextEditingController titlecontrol=TextEditingController();
+
   static const key = "customCache";
 
   @override
   void initState(){
     path();
+      //selectedimage.clear();
+    if(selectedvideo!=null)
+      {
+        selectedvideo.clear();
+      }
+    if(selectedimage!=null){
+      selectedimage.clear();
+    }
+
+    authorcontrol.clear();
+    desccontrol.clear();
+    titlecontrol.clear();
     super.initState();
   }
+
+
   Future<void> path() async {
     new Directory('storage/emulated/0/Android/data/com.tvf/cache').create(recursive: true);
     new Directory('storage/emulated/0/tvf').create(recursive: true);
@@ -120,22 +135,21 @@ class _UploadArticleState extends State<UploadArticle> {
     return Scaffold(
         key: _scaffoldKey,
         appBar: AppBar(
-          backgroundColor: Colors.blue,
+          backgroundColor: Colors.indigo,
           title: Text("CREATE POST"),
           actions: <Widget>[
             RaisedButton(
               shape: RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(18.0),
+                  borderRadius: new BorderRadius.circular(40.0),
                   side: BorderSide(color: Colors.blue)
               ),
-              color: Colors.blue[800],
-              child: Text("UPLOAD IMAGE"),
+              color: Colors.blue,
+              child: Center(child:Text("POST")),
               onPressed: (){
                 checkvalidation();
                 if(allvalid){
                   _showcontent();
                 }
-
                 // Navigator.push(context,MaterialPageRoute(builder: (context) => uploadimage()));
 
               },
@@ -145,12 +159,18 @@ class _UploadArticleState extends State<UploadArticle> {
         ),
         body:
         Center(
-            child: Padding(padding: EdgeInsets.all(16),
+            child: Padding(padding: EdgeInsets.all(0),
                 child: Container(
+                  width: MediaQuery. of(context). size. width,
+                  height: MediaQuery.of(context).size.height,
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.topRight,
+                          end: Alignment.bottomLeft,
+                          colors: [Colors.lightBlueAccent[100], Colors.white])),
                   child: ListView(
                     children: <Widget>[
                       Container(
-
                           height: 50,
                           width: MediaQuery. of(context). size. width,
                           child:Card(
@@ -158,8 +178,11 @@ class _UploadArticleState extends State<UploadArticle> {
                                 borderRadius: new BorderRadius.circular(18.0),
                                 side: BorderSide(color: Colors.blue)
                             ),
-                            child:  TextField(
+                            child: Padding(
+                                padding:  EdgeInsets.fromLTRB(10, 15, 20, 5),
+                            child: TextField(
                               controller: titlecontrol,
+                              textAlign: TextAlign.center,
                               decoration: InputDecoration(
                                   hintText: "  TITLE"
                               ),
@@ -168,6 +191,9 @@ class _UploadArticleState extends State<UploadArticle> {
                                 print(settitle.post_title);
                               }
                               ,
+                            ),
+
+
                             ),
                           )
 
@@ -183,18 +209,22 @@ class _UploadArticleState extends State<UploadArticle> {
                                 borderRadius: new BorderRadius.circular(18.0),
                                 side: BorderSide(color: Colors.blue)
                             ),
-                            child:  TextField(
-                                controller: authorcontrol,
+                            child:
+                              Padding(padding: EdgeInsets.fromLTRB(10, 15, 20, 5),
+                              child:     TextField(
+                                  controller: authorcontrol,
+                                  textAlign: TextAlign.center,
+                                  decoration: InputDecoration(
+                                      hintText: "  AUTHOR NAME"
+                                  ),
+                                  onChanged: (val){
+                                    setauthor(val);
+                                    print(setauthor.author);
+                                  }
 
-                                decoration: InputDecoration(
-                                    hintText: "  AUTHOR NAME"
-                                ),
-                                onChanged: (val){
-                                  setauthor(val);
-                                  print(setauthor.author);
-                                }
+                              ),
 
-                            ),
+                              )
                           )
                       ),
                       SizedBox(height: 8),
@@ -209,7 +239,9 @@ class _UploadArticleState extends State<UploadArticle> {
                                 borderRadius: new BorderRadius.circular(18.0),
                                 side: BorderSide(color: Colors.blue)
                             ) ,
-                            child:  TextField(
+                            child:Padding(padding: EdgeInsets.fromLTRB(10, 15, 20, 5),
+                            child:   TextField(
+                              textAlign: TextAlign.center,
                                 controller: desccontrol,
                                 autofocus: false,
                                 maxLines: 10,
@@ -220,7 +252,9 @@ class _UploadArticleState extends State<UploadArticle> {
                                   setdesc(val);
                                   print(setdesc.desc);
                                 }
+
                             ),
+                            )
 
                           )
                       ),
@@ -238,6 +272,7 @@ class _UploadArticleState extends State<UploadArticle> {
                                     :Container(
                                     padding: EdgeInsets.only(left:10,right:10,bottom:10,top: 10),
                                     child: new GridView.builder(
+
                                         itemCount: selectedimage.length,
                                         gridDelegate:
                                         new SliverGridDelegateWithFixedCrossAxisCount(
@@ -266,6 +301,7 @@ class _UploadArticleState extends State<UploadArticle> {
                                 child:Center(
                                     child:selectedvideo==null? Text("VIDEO is not SELECTED")
                                         :Container(
+                                        padding: EdgeInsets.only(left:10,right:10,bottom:10,top: 10),
                                         child: new GridView.builder(
                                             itemCount: selectedvideo.length,
                                             gridDelegate:
@@ -308,16 +344,19 @@ class _UploadArticleState extends State<UploadArticle> {
             children: <Widget>[
               Padding(padding: EdgeInsets.only(top: 10),
                 child:FloatingActionButton(
+                  backgroundColor: Colors.indigo,
                   onPressed: () {
                     Navigator.push(context,MaterialPageRoute(builder: (context) => pickimage()));
 
                   },
                   child: Icon(Icons.image),
                   heroTag: null,
+
                 ),
               ),
               Padding(padding: EdgeInsets.only(top: 10),
                   child:FloatingActionButton(
+                      backgroundColor: Colors.indigo,
                     onPressed: () {
                       Navigator.push(context,MaterialPageRoute(builder: (context) => pickvideo()));
                     },

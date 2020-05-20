@@ -78,13 +78,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.14.11"
-  compressimage:
-    dependency: "direct main"
-    description:
-      name: compressimage
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.1.1"
   convert:
     dependency: transitive
     description:
@@ -208,7 +201,7 @@ packages:
       name: flutter_image_compress
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.6.7"
+    version: "0.6.8"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
