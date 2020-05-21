@@ -405,13 +405,7 @@ int fatchedcount=0;
 
       setState(() {
         imageCarouselSlider.add(thumbnailurl[i]);
-
-
       });
-
-
     }
-
   }
-
 }

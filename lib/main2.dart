@@ -9,18 +9,20 @@ import 'package:tvf/pickfiles/pickvideos.dart';
 import 'package:tvf/setdata/setdata.dart';
 import 'package:tvf/pickfiles/pickvideos.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:tvf/macdescedit.dart';
 import 'package:random_string/random_string.dart';
 import 'package:tvf/pickfiles/pickimage.dart';
 
+TextEditingController  authorcontrol=TextEditingController();
+TextEditingController desccontrol=TextEditingController();
+TextEditingController titlecontrol=TextEditingController();
 class UploadArticle extends StatefulWidget {
   @override
   _UploadArticleState createState() => _UploadArticleState();
 }
 final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 class _UploadArticleState extends State<UploadArticle> {
-  TextEditingController  authorcontrol=TextEditingController();
-    TextEditingController desccontrol=TextEditingController();
-    TextEditingController titlecontrol=TextEditingController();
+
 
   static const key = "customCache";
 
@@ -138,13 +140,23 @@ class _UploadArticleState extends State<UploadArticle> {
           backgroundColor: Colors.indigo,
           title: Text("CREATE POST"),
           actions: <Widget>[
+
+
             RaisedButton(
+
+              highlightElevation: 5,
               shape: RoundedRectangleBorder(
-                  borderRadius: new BorderRadius.circular(40.0),
+                  borderRadius: new BorderRadius.circular(10.0),
                   side: BorderSide(color: Colors.blue)
               ),
               color: Colors.blue,
-              child: Center(child:Text("POST")),
+
+              child: Row(
+                children: <Widget>[
+                  Icon(Icons.file_upload),
+                  Text("PUBLISH"),
+                ],
+              ),
               onPressed: (){
                 checkvalidation();
                 if(allvalid){
@@ -153,7 +165,8 @@ class _UploadArticleState extends State<UploadArticle> {
                 // Navigator.push(context,MaterialPageRoute(builder: (context) => uploadimage()));
 
               },
-            )
+            ),
+
           ],
 
         ),
@@ -179,12 +192,20 @@ class _UploadArticleState extends State<UploadArticle> {
                                 side: BorderSide(color: Colors.blue)
                             ),
                             child: Padding(
-                                padding:  EdgeInsets.fromLTRB(10, 15, 20, 5),
+                              padding: EdgeInsets.fromLTRB(0,0,0,0),
                             child: TextField(
+                              autofocus: false,
                               controller: titlecontrol,
-                              textAlign: TextAlign.center,
+                           //   textAlign: TextAlign.center,
                               decoration: InputDecoration(
-                                  hintText: "  TITLE"
+                                  hintText: "  TITLE",
+                                prefixIcon: IconButton(
+
+                                  icon: Icon(Icons.title),
+
+                                  color: Colors.red,
+
+                                ),
                               ),
                               onChanged: (val){
                                 settitle(val);
@@ -210,12 +231,20 @@ class _UploadArticleState extends State<UploadArticle> {
                                 side: BorderSide(color: Colors.blue)
                             ),
                             child:
-                              Padding(padding: EdgeInsets.fromLTRB(10, 15, 20, 5),
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(0,0,0,0),
                               child:     TextField(
                                   controller: authorcontrol,
-                                  textAlign: TextAlign.center,
+                               //   textAlign: TextAlign.center,
                                   decoration: InputDecoration(
-                                      hintText: "  AUTHOR NAME"
+                                      hintText: "  AUTHOR NAME",
+                                    prefixIcon: IconButton(
+
+                                      icon: Icon(Icons.face),
+
+                                      color: Colors.red,
+
+                                    ),
                                   ),
                                   onChanged: (val){
                                     setauthor(val);
@@ -239,14 +268,28 @@ class _UploadArticleState extends State<UploadArticle> {
                                 borderRadius: new BorderRadius.circular(18.0),
                                 side: BorderSide(color: Colors.blue)
                             ) ,
-                            child:Padding(padding: EdgeInsets.fromLTRB(10, 15, 20, 5),
+                            child:Padding(padding: EdgeInsets.fromLTRB(0,0,0,0),
                             child:   TextField(
-                              textAlign: TextAlign.center,
+                            //  textAlign: TextAlign.center,
                                 controller: desccontrol,
                                 autofocus: false,
                                 maxLines: 10,
                                 decoration: InputDecoration(
-                                    hintText: "  DESCRIPTION"
+                                    hintText: "  DESCRIPTION",
+                                    suffixIcon: IconButton(
+                                    onPressed: () =>  Navigator.push(context,MaterialPageRoute(builder: (context) =>fulldescedit())),
+                                         icon: Icon(Icons.pages),
+
+                                      color: Colors.indigo,
+
+                            ),
+                                  prefixIcon: IconButton(
+
+                                    icon: Icon(Icons.description),
+                                    color: Colors.indigo,
+
+                                  ),
+
                                 ),
                                 onChanged: (val){
                                   setdesc(val);
@@ -259,10 +302,21 @@ class _UploadArticleState extends State<UploadArticle> {
                           )
                       ),
                       SizedBox(height: 8),
-                      Container(
-                          height: 160,
-                          width: MediaQuery. of(context). size. width,
-                          child:Card(
+                     Row(
+                        children: <Widget>[
+                          Icon(
+                            Icons.image,
+                            color: Colors.grey,
+                            size: 24.0,
+                            semanticLabel: 'Text to announce in accessibility modes',
+                          ),
+                          Container(
+                            height: 160,
+                            width: MediaQuery. of(context). size. width*0.9,
+                            decoration: BoxDecoration(
+
+                            ),
+                          child:        Card(
                             shape: RoundedRectangleBorder(
                                 borderRadius: new BorderRadius.circular(18.0),
                                 side: BorderSide(color: Colors.blue)
@@ -286,43 +340,55 @@ class _UploadArticleState extends State<UploadArticle> {
                                 )
                             ),
 
-                          )
+                          ),
+                          ),
+
+                        ],
                       ),
+
                       FutureBuilder(builder:( BuildContext context, AsyncSnapshot snapshot){
 
-                        return Container(
-                            height: 160,
-                            width: MediaQuery. of(context). size. width,
-                            child:Card(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: new BorderRadius.circular(18.0),
-                                    side: BorderSide(color: Colors.blue)
-                                ),
-                                child:Center(
-                                    child:selectedvideo==null? Text("VIDEO is not SELECTED")
-                                        :Container(
-                                        padding: EdgeInsets.only(left:10,right:10,bottom:10,top: 10),
-                                        child: new GridView.builder(
-                                            itemCount: selectedvideo.length,
-                                            gridDelegate:
-                                            new SliverGridDelegateWithFixedCrossAxisCount(
-                                                crossAxisCount: 3),
-                                            itemBuilder: (BuildContext context, int index) {
-                                              return Container(
-                                                child:vcontroller[index].value.initialized
-                                                    ?AspectRatio(
-                                                  aspectRatio:vcontroller[index].value.aspectRatio ,
-                                                  child: VideoPlayer(vcontroller[index]),
-                                                )
-                                                    :Container()
-                                                ,
-                                              );
-                                            }
+                        return Row(
+                          children: <Widget>[
+                            Icon(Icons.video_library,
+                                color: Colors.grey,
+                              size: 24.0,
+                              semanticLabel: 'Text to announce in accessibility modes',),
+                            Container(
+                                height: 160,
+                                width: MediaQuery. of(context). size. width*0.9,
+                                child:Card(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: new BorderRadius.circular(18.0),
+                                        side: BorderSide(color: Colors.blue)
+                                    ),
+                                    child:Center(
+                                        child:selectedvideo==null? Text("VIDEO is not SELECTED")
+                                            :Container(
+                                            padding: EdgeInsets.only(left:10,right:10,bottom:10,top: 10),
+                                            child: new GridView.builder(
+                                                itemCount: selectedvideo.length,
+                                                gridDelegate:
+                                                new SliverGridDelegateWithFixedCrossAxisCount(
+                                                    crossAxisCount: 3),
+                                                itemBuilder: (BuildContext context, int index) {
+                                                  return Container(
+                                                    child:vcontroller[index].value.initialized
+                                                        ?AspectRatio(
+                                                      aspectRatio:vcontroller[index].value.aspectRatio ,
+                                                      child: VideoPlayer(vcontroller[index]),
+                                                    )
+                                                        :Container()
+                                                    ,
+                                                  );
+                                                }
+                                            )
                                         )
                                     )
-                                )
 
+                                )
                             )
+                          ],
                         ) ;
                       })
 
